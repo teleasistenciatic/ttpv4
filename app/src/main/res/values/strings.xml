@@ -79,7 +79,8 @@
         <string name="title_activity_act_debug_google_services">Debug > GoogleServices</string>
 
         <string name="label_google_services">Debug > Google Services activados</string>
-    <string name="title_activity_act_debug_google_maps">Debug > Google Maps </string>
+        <string name="title_activity_act_debug_google_maps">Debug > Google Maps </string>
+        <string name="title_activity_act_debug_monitor_bateria">Debug > Monitor Bateria</string>
 
     <!-- Fin cadenas actMain Debug -->
 

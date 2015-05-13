@@ -1,21 +1,16 @@
 package com.local.android.teleasistenciaticplus.act.widget;
 
+import com.local.android.teleasistenciaticplus.act.actLoadingScreen;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageButton;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.local.android.teleasistenciaticplus.R;
-import com.local.android.teleasistenciaticplus.act.main.actMain;
-
-import java.util.Locale;
 
 /**
  * Implementación de la acción del Widget que levanta la Actividad Principal.
@@ -50,7 +45,8 @@ public class actWidget extends AppWidgetProvider
         // Creamos los Intent y PendingIntent para lanzar la actividad principal de la APP
         PendingIntent widgetPendingIntent;
         Intent widgetIntent;
-        widgetIntent = new Intent(context,actMain.class);
+        widgetIntent = new Intent(context,actLoadingScreen.class);
+        //widgetIntent = new Intent(context,actMain.class);
         widgetPendingIntent = PendingIntent.getActivity(context, widgetId, widgetIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT );
         // Recupero las vistas del layout del widget

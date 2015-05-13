@@ -34,6 +34,9 @@
     <!-- Mantener despierto la cpu -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <!-- Vibrador (el gustillo de ellas) -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <!-- Aplicacion -->
     <application
         android:name=".modelo.Hook"
@@ -128,6 +131,11 @@
         <activity
             android:name=".act.debug.actDebugGoogleMaps"
             android:label="@string/title_activity_act_debug_google_maps"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".act.debug.actDebugOjeadorBateria"
+            android:label="@string/title_activity_act_debug_monitor_bateria"
             android:screenOrientation="portrait">
         </activity>
         <!-- Fin actividades Depuración -->
