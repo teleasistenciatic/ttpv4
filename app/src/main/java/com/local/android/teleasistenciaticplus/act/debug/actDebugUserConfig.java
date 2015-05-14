@@ -42,6 +42,16 @@ public class actDebugUserConfig extends Activity {
 
     }
 
+    public void user_config_borrar_appshared_ultimo_aviso_enviado(View view) {
+
+        new AppSharedPreferences().deletePreferenceData(Constants.NOMBRE_APP_SHARED_PREFERENCES_DATETIME_ULTIMO_SMS_ENVIADO);
+
+        Toast.makeText(getBaseContext(), "OK",
+                Toast.LENGTH_SHORT).show();
+
+    }
+
+
     /**
      * Salida de la aplicación al pulsar el botón de salida del layout
      *
