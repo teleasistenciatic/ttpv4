@@ -215,6 +215,29 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
     }
 
     /**
+     * Botón para llamada al primer contacto
+     * Activa la llamada de teléfono al primer contacto listado
+     *
+     * @param view vista del botón.
+     */
+    public void llamada_action_button(View view) {
+        Toast.makeText(getBaseContext(), "Llamar a contacto", Toast.LENGTH_LONG).show();
+        //TODO implementar este método y la clase (actBackToHome)
+        /*
+        Intent intent = new Intent(this, actCellPhone.class);
+
+
+        startActivity(intent);
+
+        if( Constants.SHOW_ANIMATION ) {
+
+            overridePendingTransition(R.animator.animation2, R.animator.animation1);
+
+        }
+        */
+    }
+
+    /**
      * Botón para activar el modo ducha
      * Activa el modo ducha
      *
@@ -253,6 +276,8 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
 
         }
     }
+
+
 
 
     /**
