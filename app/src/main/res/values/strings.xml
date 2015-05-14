@@ -107,7 +107,15 @@
         <string name="caidas_texto">Configuración de la detección de caidas</string>
         <string name="caidas_texto_estado_activo">Servicio iniciado</string>
         <string name="caidas_texto_estado_inactivo">Servicio detenido</string>
+
+        <string name="title_activity_act_debug_caidas">actDebugCaidas</string>
+        <string name="title_activity_act_user_options_caidas">Configuración > Detección de caidas</string>
     <!-- Fin cadenas detección de caidas -->
+
+    <!-- Relacionados con Zona Segura -->
+    <string name="zona_segura_label">Configuracion > Zona Segura</string>
+    <string name="title_activity_act_user_options_zona_segura">Configuración > Zona Segura</string>
+    <!-- Fin cadenas Zona Segura -->
 
     <!-- Relacionadas SMS -->
         <string name="user_sms_sent">Enviado</string>
@@ -134,8 +142,6 @@
 
     <!-- Mensajes del Widget -->
     <string name="widget_image_button_description">Pulse para iniciar Tele Asistencia TIC+</string>
-    <string name="title_activity_act_debug_caidas">actDebugCaidas</string>
-    <string name="title_activity_act_user_options_caidas">actUserOptionsCaidas</string>
     <!-- Fin Widget -->
 
 </resources>

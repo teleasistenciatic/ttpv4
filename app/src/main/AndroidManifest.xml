@@ -17,6 +17,7 @@
 
     <!-- Telefono -->
     <uses-permission android:name="android.permission.CALL_PHONE"></uses-permission>
+    <uses-permission android:name="android.permission.CALL_PHONE"></uses-permission>
 
     <!-- Almacenamiento -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -224,6 +225,12 @@
         <activity
             android:name=".act.user.actUserOptionsCaidas"
             android:label="@string/title_activity_act_user_options_caidas"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".act.user.actUserOptionsZonaSegura"
+            android:label="@string/title_activity_act_user_options_zona_segura"
             android:screenOrientation="portrait">
         </activity>
 

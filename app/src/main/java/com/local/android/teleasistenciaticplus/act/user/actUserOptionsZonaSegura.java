@@ -10,11 +10,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.local.android.teleasistenciaticplus.R;
-import com.local.android.teleasistenciaticplus.lib.detectorCaidas.ServicioMuestreador;
-import com.local.android.teleasistenciaticplus.lib.helper.AppSharedPreferences;
-import com.local.android.teleasistenciaticplus.modelo.Constants;
 
-public class actUserOptionsCaidas extends Activity {
+
+public class actUserOptionsZonaSegura extends Activity {
 
     private TextView texto;
 
@@ -23,7 +21,7 @@ public class actUserOptionsCaidas extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act_user_options_caidas);
 
-        AppSharedPreferences userSharedPreferences = new AppSharedPreferences();
+        /*AppSharedPreferences userSharedPreferences = new AppSharedPreferences();
 
         CheckBox micheckbox=(CheckBox) findViewById(R.id.caidas_checkbox);
         texto = (TextView) findViewById(R.id.caidas_texto_estado);
@@ -35,13 +33,13 @@ public class actUserOptionsCaidas extends Activity {
         }else{
             micheckbox.setChecked(false);
             texto.setText(R.string.caidas_texto_estado_inactivo);
-        }
+        }*/
     }
 
+    ///////////////////////////// MENUS ///////////////////////////////
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_act_user_options_caidas, menu);
+        getMenuInflater().inflate(R.menu.menu_act_user_options_zona_segura, menu);
         return true;
     }
 
@@ -53,16 +51,19 @@ public class actUserOptionsCaidas extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.menu_user_options_caidas_exit_app) {
+        if (id == R.id.menu_user_options_zona_segura_exit_app) {
             finish();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    ///////////////////////////// LISTENERS ///////////////////////////////
+
     public void onClick(View v){
         switch(v.getId()) {
             case R.id.caidas_checkbox:
+                /*
                 //modificar la cte que controla el inicio del servicio al comienzo de la app.
                 AppSharedPreferences userSharedPreferences = new AppSharedPreferences();
                 boolean checked = ((CheckBox) v).isChecked();
@@ -70,19 +71,23 @@ public class actUserOptionsCaidas extends Activity {
                     userSharedPreferences.setPreferenceData(Constants.CAIDAS,Constants.ACTIVO);
                 }else{
                     userSharedPreferences.setPreferenceData(Constants.CAIDAS,Constants.INACTIVO);
-                }
+                }*/
                 break;
             case R.id.caidas_boton_arrancar:
+                /*
                 //arrancar el servicio ?
                 Intent intentA=new Intent(this, ServicioMuestreador.class);
                 startService(intentA);
                 texto.setText(R.string.caidas_texto_estado_activo);
+                break;*/
                 break;
             case R.id.caidas_boton_parar:
+                /*
                 //parar el servicio ?
                 Intent intentB=new Intent(this, ServicioMuestreador.class);
                 stopService(intentB);
                 texto.setText(R.string.caidas_texto_estado_inactivo);
+                break;*/
                 break;
         }
     }

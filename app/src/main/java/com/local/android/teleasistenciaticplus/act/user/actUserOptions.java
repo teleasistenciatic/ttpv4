@@ -30,7 +30,8 @@ public class actUserOptions extends Activity {
         String[] values = new String[]{
                 "Datos personales", // 0,
                 "Personas de contacto", // 1
-                "Detección de caidas" //2
+                "Detección de caidas", //2
+                "Zona segura" //3
         };
 
         /// Creación del adaptador con su String
@@ -60,6 +61,9 @@ public class actUserOptions extends Activity {
                         break;
                     case 2: //"Detección de caidas"
                         actToLoad = actUserOptionsCaidas.class;
+                        break;
+                    case 3: //"Zona segura"
+                        actToLoad = actUserOptionsZonaSegura.class;
                         break;
                 }
 
