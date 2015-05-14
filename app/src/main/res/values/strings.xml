@@ -109,12 +109,18 @@
         <string name="caidas_texto_estado_inactivo">Servicio detenido</string>
 
         <string name="title_activity_act_debug_caidas">actDebugCaidas</string>
-        <string name="title_activity_act_user_options_caidas">Configuración > Detección de caidas</string>
+        <string name="title_activity_act_user_options_caidas">Detección de caidas</string>
     <!-- Fin cadenas detección de caidas -->
 
     <!-- Relacionados con Zona Segura -->
-    <string name="zona_segura_label">Configuracion > Zona Segura</string>
-    <string name="title_activity_act_user_options_zona_segura">Configuración > Zona Segura</string>
+    <string name="zona_segura_label">Activar o desactivar la función</string>
+    <string name="title_activity_act_user_options_zona_segura">Zona Segura</string>
+    <string name="zona_segura_activar">Activar la función zona segura al inicio</string>
+    <string name="zona_segura_texto_estado_activo">Servicio iniciado</string>
+    <string name="zona_segura_texto_estado_inactivo">Servicio detenido</string>
+    <string name="zona_segura_establecer_home">Pulse para establecer el hogar</string>
+    <string name="zona_segura_label_inicial">Zona Segura</string>
+
     <!-- Fin cadenas Zona Segura -->
 
     <!-- Relacionadas SMS -->

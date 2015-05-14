@@ -228,11 +228,14 @@
             android:screenOrientation="portrait">
         </activity>
 
+        <!-- Actividad y servicio de Zona Segura -->
         <activity
             android:name=".act.user.actUserOptionsZonaSegura"
             android:label="@string/title_activity_act_user_options_zona_segura"
             android:screenOrientation="portrait">
         </activity>
+
+        <!-- Fin actividad y servicio de Zona Segura -->
 
     </application>
 
