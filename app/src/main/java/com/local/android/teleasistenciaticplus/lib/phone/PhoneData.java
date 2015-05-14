@@ -48,19 +48,8 @@ public class PhoneData {
 
     }
 
-    /**
-     * Getter del numero de teléfono
-     * @return phoneNumber
-     */
-    public String getNumber() {
-        return phoneNumber;
-    }
-
     public String getPhoneImei() {
         return phoneNumber;
     }
 
-    public String getGPSPos() {
-        return "0:0";
-    }
 }

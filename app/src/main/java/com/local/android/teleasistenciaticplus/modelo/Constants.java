@@ -12,7 +12,7 @@ public interface Constants {
     ////////////////////////////////////////////////
 
         public static final DebugLevel DEBUG_LEVEL = DebugLevel.DEBUG;
-        public static final boolean FAKE_SMS = true;
+        public static final boolean FAKE_SMS = false;
 
         public static final Boolean LOG_TO_FILE = true;
         public static final String DEBUG_LOG_FILE = "teleasistencia.log";
@@ -26,7 +26,7 @@ public interface Constants {
         public static final long SMS_SENDING_DELAY = 5000; //Frecuencia de envío de mensajes
         public static final long MEMORY_DIVIDER = 1048576L; //BytestoMegabytes
         public static final boolean SHOW_ANIMATION = true; //Decide si se realizan transiciones entre actividades o fragmentos
-        public static final boolean PLAY_SOUNDS = false; //Decide si se reproducen sonidos en la aplicación
+        public static final boolean PLAY_SOUNDS = true; //Decide si se reproducen sonidos en la aplicación
 
         /*
         1024 bytes      == 1 kilobyte

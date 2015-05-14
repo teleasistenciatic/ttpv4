@@ -2,6 +2,7 @@ package com.local.android.teleasistenciaticplus.act.main;
 
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -129,7 +130,6 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -221,20 +221,22 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
      * @param view vista del botón.
      */
     public void llamada_action_button(View view) {
-        Toast.makeText(getBaseContext(), "Llamar a contacto", Toast.LENGTH_LONG).show();
-        //TODO implementar este método y la clase (actBackToHome)
-        /*
-        Intent intent = new Intent(this, actCellPhone.class);
 
+        AppSharedPreferences miAppSharedPreferences = new AppSharedPreferences();
 
-        startActivity(intent);
+        if ( !miAppSharedPreferences.hasPersonasContacto() ) {
 
-        if( Constants.SHOW_ANIMATION ) {
+            Toast.makeText(getBaseContext(), "Error: no existen personas de contacto", Toast.LENGTH_LONG).show();
 
-            overridePendingTransition(R.animator.animation2, R.animator.animation1);
+        } else {
+            //Existen personas de contacto
+            // Se obtiene la primera persona de contacto
+            miAppSharedPreferences.getFirstTelefonoContacto();
 
+            String url = "tel:" + miAppSharedPreferences.getFirstTelefonoContacto();
+            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse(url));
+            startActivity(intent);
         }
-        */
     }
 
     /**

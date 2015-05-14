@@ -98,7 +98,7 @@ public class actDuchaCuentaAtras extends FragmentActivity implements AppDialog.A
 
         final NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        //futureTime = 5000;
+        //futureTime = 800000;
         TheCountDown = new CountDownTimer(futureTime, interval) {
 
             Boolean alarmaDisparada = false;
