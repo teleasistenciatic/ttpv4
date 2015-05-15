@@ -73,7 +73,7 @@ public class actUserOptionsZonaSegura extends Activity implements Constants {
             case R.id.zona_segura_boton_arrancar:
                 //TODO hacer que funcione al hablar
                 // new SintetizadorVoz( getApplicationContext() ).hablaPorEsaBoquita("Hola German");
-                SintetizadorVoz prueba = new SintetizadorVoz(GlobalData.getAppContext() );
+                SintetizadorVoz prueba = new SintetizadorVoz( getApplicationContext() );
                 prueba.hablaPorEsaBoquita("Prueba de sistesis de voz");
 
                 /*

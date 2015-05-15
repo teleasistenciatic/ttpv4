@@ -13,6 +13,7 @@ import android.widget.Toast;
 import java.util.Locale;
 
 public class SintetizadorVoz {
+
     private TextToSpeech myTTS;
     private boolean readyToSpeak = false;
     private Context context;
