@@ -67,9 +67,19 @@ public interface Constants {
     public static final String ZONA_SEGURA_RADIO = "zonaseguraradio";
 
     ////////////////////////////////////////////////
-    // POSICION POR DEFECTO DE MAPA DE ZONA SEGURA
+    // ZONA SEGURA
     ////////////////////////////////////////////////
 
     public static final double DEFAULT_LATITUDE = 37.886;
     public static final double DEFAULT_LONGITUDE = -4.7486;
+
+    public static final int MAX_ZONA_SEGURA_RADIO = 5000;
+    public static final float DEFAULT_MAP_ZOOM = 15;
+
+    public static final long GPS_READ_INTERVAL = 1000 * 10;
+    public static final long GPS_READ_FASTEST_INTERVAL = 1000 * 5;
+
+
+
+
 }

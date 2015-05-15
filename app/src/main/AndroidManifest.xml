@@ -240,6 +240,11 @@
             android:label="@string/title_activity_act_zona_segura_set_home"
             android:screenOrientation="portrait">
         </activity>
+
+        <service
+            android:name="act.zonasegura.serviceZonaSegura"
+            android:exported="false" > //Solo se puede llamar por nuestra aplicación // android:process=":myservicename"
+        </service>
         <!-- Fin actividad y servicio de Zona Segura -->
 
     </application>

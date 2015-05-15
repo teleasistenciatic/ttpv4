@@ -1,7 +1,5 @@
 package com.local.android.teleasistenciaticplus.act.zonasegura;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -20,14 +18,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.local.android.teleasistenciaticplus.R;
 import com.local.android.teleasistenciaticplus.lib.helper.AppLog;
 import com.local.android.teleasistenciaticplus.lib.helper.AppSharedPreferences;
-import com.local.android.teleasistenciaticplus.lib.sound.SintetizadorVoz;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
 
 /**
  * Actividad que muestra la zona segura
  */
 public class actZonaSeguraHomeSet extends FragmentActivity
-        implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerDragListener {
+        implements OnMapReadyCallback,
+        GoogleMap.OnMapLongClickListener,
+        GoogleMap.OnMarkerDragListener {
 
     private GoogleMap map;
 
@@ -64,9 +63,7 @@ public class actZonaSeguraHomeSet extends FragmentActivity
         /** Preparamos para leer el radio de la zona segura desde el slider */
         SeekBar miSeekBar = (SeekBar) findViewById(R.id.seekbar_radio_zona_segura);
 
-        miSeekBar.setProgress(1000);
-        miSeekBar.incrementProgressBy(10);
-        miSeekBar.setMax(5000);
+        miSeekBar.setMax( Constants.MAX_ZONA_SEGURA_RADIO );
 
         miSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -85,14 +82,22 @@ public class actZonaSeguraHomeSet extends FragmentActivity
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 // TODO Auto-generated method stub
 
+
                 if (miMarker == null) {
                     return;
                 }
 
+                if ( progress < 10 ) {
+                    progress = 10;
+                }
+
+                progress = progress / 10;
+                progress = progress * 10;
+
                 radio = progress;
 
                 TextView miTextView = (TextView) findViewById(R.id.text_numero_metros);
-                miTextView.setText(radio + " metros");
+                miTextView.setText(radio + " m");
 
                 if (mCircle != null) {
                     map.clear();
@@ -141,10 +146,13 @@ public class actZonaSeguraHomeSet extends FragmentActivity
             this.radio = miRadio;
             this.miPos = miLatLng;
 
+            TextView miTextView = (TextView) findViewById(R.id.text_numero_metros);
+            miTextView.setText(radio + " m");
+
             AppLog.d(TAG, coordenadasYradio[1] + "," + coordenadasYradio[1] + "," + coordenadasYradio[2]);
 
             // Se mueve la cámara a la posición
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(miLatLng, 15));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(miLatLng, Constants.DEFAULT_MAP_ZOOM));
             // Se pinta el marcador y el círculo
             drawMarkerWithCircle(miLatLng, miRadio);
 
@@ -152,7 +160,7 @@ public class actZonaSeguraHomeSet extends FragmentActivity
 
             //Si no hay datos previos, centramos la posición en Córdoba
             LatLng miLatLng = new LatLng( Constants.DEFAULT_LATITUDE, Constants.DEFAULT_LONGITUDE );
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(miLatLng, 10));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(miLatLng, Constants.DEFAULT_MAP_ZOOM - 5));
 
         }
     }
