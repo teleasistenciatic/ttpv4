@@ -15,6 +15,7 @@ import com.local.android.teleasistenciaticplus.act.zonasegura.actZonaSeguraHomeS
 import com.local.android.teleasistenciaticplus.lib.helper.AppSharedPreferences;
 import com.local.android.teleasistenciaticplus.lib.sound.SintetizadorVoz;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
+import com.local.android.teleasistenciaticplus.modelo.GlobalData;
 
 
 public class actUserOptionsZonaSegura extends Activity implements Constants {
@@ -71,7 +72,9 @@ public class actUserOptionsZonaSegura extends Activity implements Constants {
 
             case R.id.zona_segura_boton_arrancar:
                 //TODO hacer que funcione al hablar
-                new SintetizadorVoz( getApplicationContext() ).hablaPorEsaBoquita("Hola German");
+                // new SintetizadorVoz( getApplicationContext() ).hablaPorEsaBoquita("Hola German");
+                SintetizadorVoz prueba = new SintetizadorVoz(GlobalData.getAppContext() );
+                prueba.hablaPorEsaBoquita("Prueba de sistesis de voz");
 
                 /*
                 //arrancar el servicio ?

@@ -43,7 +43,7 @@ public class SintetizadorVoz {
     }
 
     public void hablaPorEsaBoquita(String text) {
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, text + " : " + readyToSpeak, Toast.LENGTH_SHORT).show();
         if (readyToSpeak)
             myTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
