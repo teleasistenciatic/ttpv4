@@ -242,8 +242,9 @@
         </activity>
 
         <service
-            android:name="act.zonasegura.serviceZonaSegura"
-            android:exported="false" > //Solo se puede llamar por nuestra aplicación // android:process=":myservicename"
+            android:name=".act.zonasegura.serviceZonaSegura"
+            android:process=":myservicename"
+            android:exported="false" > //Solo se puede llamar por nuestra aplicación //
         </service>
         <!-- Fin actividad y servicio de Zona Segura -->
 
