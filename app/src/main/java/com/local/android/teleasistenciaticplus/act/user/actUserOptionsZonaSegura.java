@@ -1,15 +1,19 @@
 package com.local.android.teleasistenciaticplus.act.user;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.local.android.teleasistenciaticplus.R;
+import com.local.android.teleasistenciaticplus.act.zonasegura.actZonaSeguraHomeSet;
 import com.local.android.teleasistenciaticplus.lib.helper.AppSharedPreferences;
+import com.local.android.teleasistenciaticplus.lib.sound.SintetizadorVoz;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
 
 
@@ -22,8 +26,7 @@ public class actUserOptionsZonaSegura extends Activity implements Constants {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act_user_options_zona_segura);
 
-        // Comprobación de que la zona segura esté activa o no
-
+        // Comprobacion de que la zona segura este activa o no
 
         AppSharedPreferences userSharedPreferences = new AppSharedPreferences();
 
@@ -47,8 +50,10 @@ public class actUserOptionsZonaSegura extends Activity implements Constants {
         switch (v.getId()) {
 
             case R.id.zona_segura_establecer_home:
-                //Llamamos a la actividad que hace aparecer el mapa
-
+                //Llamamos a la actividad que hace aparecer el mapa Zona Segura Set Home
+                Intent newIntent;
+                newIntent = new Intent().setClass(this, actZonaSeguraHomeSet.class);
+                startActivity(newIntent);
                 break;
 
             case R.id.zona_segura_checkbox:
@@ -65,6 +70,9 @@ public class actUserOptionsZonaSegura extends Activity implements Constants {
                 break;
 
             case R.id.zona_segura_boton_arrancar:
+                //TODO hacer que funcione al hablar
+                new SintetizadorVoz( getApplicationContext() ).hablaPorEsaBoquita("Hola German");
+
                 /*
                 //arrancar el servicio ?
                 Intent intentA=new Intent(this, ServicioMuestreador.class);

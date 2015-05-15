@@ -56,7 +56,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:onClick="onClick"
-        android:text="@string/zona_segura_activar" />
+        android:text="@string/zona_segura_activar"
+        />
 
     <Button
         android:id="@+id/zona_segura_boton_arrancar"
@@ -67,7 +68,7 @@
         android:layout_below="@+id/zona_segura_checkbox"
         android:layout_marginTop="40dp"
         android:onClick="onClick"
-        android:text="@string/caidas_boton_arrancar" />
+        android:text="@string/caidas_boton_arrancar"/>
 
     <Button
         android:id="@+id/zona_segura_boton_parar"
@@ -77,7 +78,9 @@
         android:layout_alignRight="@+id/zona_segura_checkbox"
         android:layout_alignTop="@+id/zona_segura_boton_arrancar"
         android:onClick="onClick"
-        android:text="@string/caidas_boton_parar" />
+        android:text="@string/caidas_boton_parar"
+
+        android:saveEnabled="false"/>
 
     <TextView
         android:id="@+id/zona_segura_texto_estado_servicio"

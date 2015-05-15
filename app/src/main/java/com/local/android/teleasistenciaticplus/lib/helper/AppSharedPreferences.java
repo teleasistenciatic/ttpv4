@@ -3,6 +3,7 @@ package com.local.android.teleasistenciaticplus.lib.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
 import com.local.android.teleasistenciaticplus.modelo.GlobalData;
 
@@ -189,7 +190,66 @@ public class AppSharedPreferences implements Constants {
         }
     }
 
-    //Estos tres metodos son genéricos y permiten leer cualquier valor de las AppSharedPreferences
+
+    /**
+     * ¿Tiene la posición de zona segura guardada?
+     *
+     * @return boolean tiene establecida la zona segura
+     */
+    public boolean hasZonaSegura() {
+
+        SharedPreferences prefs = GlobalData.getAppContext().getSharedPreferences(APP_SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE);
+
+        String latitud = prefs.getString(Constants.ZONA_SEGURA_LATITUD, "");
+        String longitud = prefs.getString(Constants.ZONA_SEGURA_LONGITUD, "");
+
+
+        if ( (latitud.length() > 0) && (longitud.length() > 0) ) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
+     * Leemos los datos de la última posición de zona segura guardada en caso de haberlos
+     * @return
+     */
+    public String[] getZonaSeguraData() {
+
+        AppSharedPreferences miAppSharedPreferences = new AppSharedPreferences();
+
+        String[] datos = {
+                miAppSharedPreferences.getPreferenceData(Constants.ZONA_SEGURA_LATITUD),
+                miAppSharedPreferences.getPreferenceData(Constants.ZONA_SEGURA_LONGITUD),
+                miAppSharedPreferences.getPreferenceData(Constants.ZONA_SEGURA_RADIO)
+        };
+
+        return datos;
+    }
+
+    /**
+     * Guarda los datos de la Zona Segura en las Shared Preferences
+     * @param pos
+     * @param radio
+     */
+    public void setZonaSeguraData(LatLng pos, Double radio) {
+
+        setPreferenceData(Constants.ZONA_SEGURA_LATITUD, String.valueOf(pos.latitude));
+        setPreferenceData(Constants.ZONA_SEGURA_LONGITUD, String.valueOf(pos.longitude));
+
+        if (radio < 10) {
+            radio = 10.0;
+        }
+
+        setPreferenceData(Constants.ZONA_SEGURA_RADIO, String.valueOf(radio));
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////// METODOS GENERICOS CUALQUIER SHARED PREFERENCES //////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////
 
     public void setPreferenceData(String map, String valor) {
         SharedPreferences.Editor editor = GlobalData.getAppContext().getSharedPreferences(APP_SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE).edit();

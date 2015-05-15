@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.local.android.teleasistenciaticplus.R;
 import com.local.android.teleasistenciaticplus.lib.helper.AppDialog;
 import com.local.android.teleasistenciaticplus.lib.helper.AppSharedPreferences;
-import com.local.android.teleasistenciaticplus.lib.playsound.PlaySound;
+import com.local.android.teleasistenciaticplus.lib.sound.PlaySound;
 
 
 public class actUserOptionsDatosPersonales extends FragmentActivity implements AppDialog.AppDialogNeutralListener {

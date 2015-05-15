@@ -5,7 +5,7 @@ import android.hardware.SensorEvent;
 import android.util.Log;
 
 import com.local.android.teleasistenciaticplus.R;
-import com.local.android.teleasistenciaticplus.lib.playsound.PlaySound;
+import com.local.android.teleasistenciaticplus.lib.sound.PlaySound;
 import com.local.android.teleasistenciaticplus.lib.sms.SmsLauncher;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
 import com.local.android.teleasistenciaticplus.modelo.DebugLevel;

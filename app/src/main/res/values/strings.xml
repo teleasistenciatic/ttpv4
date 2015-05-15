@@ -115,6 +115,7 @@
     <!-- Relacionados con Zona Segura -->
     <string name="zona_segura_label">Activar o desactivar la función</string>
     <string name="title_activity_act_user_options_zona_segura">Zona Segura</string>
+    <string name="title_activity_act_zona_segura_set_home">Zona Segura, establecer hogar</string>
     <string name="zona_segura_activar">Activar la función zona segura al inicio</string>
     <string name="zona_segura_texto_estado_activo">Servicio iniciado</string>
     <string name="zona_segura_texto_estado_inactivo">Servicio detenido</string>

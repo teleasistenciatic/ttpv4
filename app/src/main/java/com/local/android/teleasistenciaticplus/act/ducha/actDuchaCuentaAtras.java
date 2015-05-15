@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.local.android.teleasistenciaticplus.R;
 import com.local.android.teleasistenciaticplus.act.main.actMain;
 import com.local.android.teleasistenciaticplus.lib.helper.AppDialog;
-import com.local.android.teleasistenciaticplus.lib.playsound.PlaySound;
+import com.local.android.teleasistenciaticplus.lib.sound.PlaySound;
 import com.local.android.teleasistenciaticplus.lib.sms.SmsLauncher;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
 import com.local.android.teleasistenciaticplus.modelo.GlobalData;
