@@ -3,9 +3,6 @@ package com.local.android.teleasistenciaticplus.act.zonasegura;
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -27,12 +24,12 @@ import com.google.android.gms.location.LocationServices;
 import com.local.android.teleasistenciaticplus.R;
 import com.local.android.teleasistenciaticplus.lib.helper.AppLog;
 import com.local.android.teleasistenciaticplus.lib.helper.AppSharedPreferences;
+import com.local.android.teleasistenciaticplus.lib.sound.PlaySound;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
+import com.local.android.teleasistenciaticplus.modelo.DebugLevel;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Servicio Zona Segura que comprueba la distancia con un punto dado
@@ -274,8 +271,6 @@ public class serviceZonaSegura extends Service implements
                     zonaSeguraLongitud,
                     zonaSeguraRadio, (float) mCurrentLocation.getAccuracy());
 
-
-
             String lat = String.valueOf(mCurrentLocation.getLatitude());
             String lng = String.valueOf(mCurrentLocation.getLongitude());
 
@@ -305,32 +300,22 @@ public class serviceZonaSegura extends Service implements
             //Todas las posiciones de la lista están fuera de la zona segura
             if ( miFifoPosiciontiempo.listaPosicionTiempoAllNotInZone() ) {
 
-            /* SONIDO */
-                try {
-                    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-                    Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-                    r.play();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                //Si estamos en modo depuración se indica
+                if ( (Constants.PLAY_SOUNDS) && (Constants.DEBUG_LEVEL == DebugLevel.DEBUG)) {
+                    PlaySound.play(R.raw.zonasegura_ha_salido_zonasegura);
                 }
-            /* Fin sonido */
 
             }
 
             AppLog.d(TAG, mostrar);
 
-            /* SONIDO */
-            try {
-                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-                r.play();
-            } catch (Exception e) {
-                e.printStackTrace();
+            //Si estamos en modo depuración se indica
+            if ( (Constants.PLAY_SOUNDS) && (Constants.DEBUG_LEVEL == DebugLevel.DEBUG)) {
+                PlaySound.play(R.raw.zonasegura_gps_leido);
             }
-            /* Fin sonido */
 
-            Toast.makeText(getBaseContext(), (String) mostrar,
-                    Toast.LENGTH_LONG).show();
+            /*Toast.makeText(getBaseContext(), (String) mostrar,
+                    Toast.LENGTH_LONG).show();*/
         } else {
             AppLog.d(TAG, "location is null ...............");
         }
