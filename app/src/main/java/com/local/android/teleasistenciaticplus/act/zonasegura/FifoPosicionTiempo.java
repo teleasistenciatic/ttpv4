@@ -1,5 +1,7 @@
 package com.local.android.teleasistenciaticplus.act.zonasegura;
 
+import com.local.android.teleasistenciaticplus.modelo.Constants;
+
 import java.util.LinkedList;
 
 /**
@@ -32,7 +34,7 @@ public class FifoPosicionTiempo {
      *
      * @param miPosicionTiempo objeto que se va a añadir a la lista
      */
-    public void addPosiciones(PosicionTiempo miPosicionTiempo) {
+    public void add(PosicionTiempo miPosicionTiempo) {
 
         if (posiciones.size() < sizeFifoPool) {
 
@@ -44,7 +46,10 @@ public class FifoPosicionTiempo {
             posiciones.addFirst(miPosicionTiempo);
 
         }
+    }
 
+    public int size() {
+        return posiciones.size();
     }
 
     /*
@@ -60,6 +65,11 @@ public class FifoPosicionTiempo {
 
     Si todos los valores son FALSE, quiere decir que las ultimas muestras
     están fuera de la ZonaSegura y se devuelve
+     */
+
+    /**
+     *
+     * @return sólo es valido cuando devuelve TRUE, con FALSE no podemos estar seguros
      */
     public boolean listaPosicionTiempoAllNotInZone() {
 
@@ -85,8 +95,17 @@ public class FifoPosicionTiempo {
         //Si todos los valores son FALSE asumimos que ha salido
         // de la Zona Segura
 
+        //Sólo se da por válido cuando la pila esté llena
+        boolean pilaFifoCompleta;
 
-        if ( numeroTrue == 0 ) {
+        if ( posiciones.size() == Constants.DEFAULT_ZONA_SEGURA_POOL) {
+            pilaFifoCompleta = true;
+        } else {
+            pilaFifoCompleta = false;
+        }
+
+
+        if ( ( numeroTrue == 0 ) && (pilaFifoCompleta) ) {
             return true;
         } else {
             //False es un valor que no nos vale puesto

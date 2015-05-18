@@ -26,6 +26,7 @@ import com.google.android.gms.location.LocationServices;
 
 import com.local.android.teleasistenciaticplus.R;
 import com.local.android.teleasistenciaticplus.lib.helper.AppLog;
+import com.local.android.teleasistenciaticplus.lib.helper.AppSharedPreferences;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
 
 import java.text.DateFormat;
@@ -55,14 +56,13 @@ public class serviceZonaSegura extends Service implements
     IBinder mBinder;        // interfaz
 
     /* Datos de posicion de zona segura */
-    double zonaSeguraLatitud = Constants.DEFAULT_LATITUDE;
-    double zonaSeguraLongitud = Constants.DEFAULT_LONGITUDE;
+    double zonaSeguraLatitud;
+    double zonaSeguraLongitud;
     double zonaSeguraRadio;
 
     /* Vector de actualizaciones de posición */
 
     FifoPosicionTiempo miFifoPosiciontiempo = new FifoPosicionTiempo(Constants.DEFAULT_ZONA_SEGURA_POOL);
-    List<PosicionTiempo> Posiciones = new ArrayList<>(); //TODO borrar
 
     //private Timer mTimer = new Timer();
     private final Messenger mMessenger = new Messenger(new IncomingMessageHandler()); // Target we publish for clients to send messages to IncomingHandler.
@@ -89,14 +89,39 @@ public class serviceZonaSegura extends Service implements
             String errorGooglePlay = getResources().getString(R.string.error_google_play_no_zona_segura);
             Toast.makeText(getBaseContext(), errorGooglePlay, Toast.LENGTH_SHORT).show();
             AppLog.e(TAG, errorGooglePlay);
-            return;
+            return; //Salida del servicio
+
+        }
+
+        //El servicio sólo funcionará si tenemos una posición guardada de lat/long/radio en las
+        //Sharedpreferences
+
+        AppSharedPreferences miAppSharedPreferences = new AppSharedPreferences();
+
+        boolean hasZonaSeguraGpsPos = miAppSharedPreferences.hasZonaSegura();
+
+        if (!hasZonaSeguraGpsPos) {
+
+            String errorZonaSegura = getResources().getString(R.string.error_zona_segura_no_home_set);
+            Toast.makeText(getBaseContext(), errorZonaSegura, Toast.LENGTH_LONG).show();
+            AppLog.e(TAG, errorZonaSegura);
+            return; //Salida del servicio
+
+        } else { //Existe zona segura
+
+            String[] datosZonaSegura = miAppSharedPreferences.getZonaSeguraData();
+
+            //Leemos de las sharedpreferences y guardamos la posición y
+            //radio de la zona segura
+            zonaSeguraLatitud = Double.parseDouble(datosZonaSegura[0]);
+            zonaSeguraLongitud = Double.parseDouble(datosZonaSegura[1]);
+            zonaSeguraRadio = Double.parseDouble(datosZonaSegura[0]);
 
         }
 
         //Tras crear la petición de posición, cada vez que se produzca un cambio en la posición
         //se llamará al método onLocationChanged
         createLocationRequest();
-
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -138,7 +163,7 @@ public class serviceZonaSegura extends Service implements
      */
     @Override
     public IBinder onBind(Intent intent) {
-        Log.i(TAG, "onBind");
+        AppLog.d(TAG, "onBind");
         return mMessenger.getBinder();
     }
 
@@ -218,23 +243,30 @@ public class serviceZonaSegura extends Service implements
     }
 
     /**
+     *
+     * @return
+     */
+    private double distanciaEntreHomeYPosicionActual() {
+
+        float[] resultado = new float[3]; //el resultado de distancebetween requiere un float[]
+
+        Location.distanceBetween(mCurrentLocation.getLatitude(),
+                mCurrentLocation.getLongitude(),
+                zonaSeguraLatitud,
+                zonaSeguraLongitud,
+                resultado);
+
+        return resultado[0];
+
+    }
+    /**
      * CheckZonaSegura
      */
     private void checkZonaSegura() {
 
         AppLog.d(TAG, "Check Zona Segura initiated .............");
 
-        if (null != mCurrentLocation) {
-
-            /* Creación de la LatLong */
-            float[] resultado = new float[3];
-
-            Location.distanceBetween(mCurrentLocation.getLatitude(),
-                    mCurrentLocation.getLongitude(),
-                    zonaSeguraLatitud,
-                    zonaSeguraLongitud,
-                    resultado);
-
+        if ( mCurrentLocation != null ) {
 
             boolean inSecureZone = personInSecureZone(mCurrentLocation.getLatitude(),
                     mCurrentLocation.getLongitude(),
@@ -242,19 +274,21 @@ public class serviceZonaSegura extends Service implements
                     zonaSeguraLongitud,
                     zonaSeguraRadio, (float) mCurrentLocation.getAccuracy());
 
-            String distancia = String.valueOf(resultado[0]);
+
 
             String lat = String.valueOf(mCurrentLocation.getLatitude());
             String lng = String.valueOf(mCurrentLocation.getLongitude());
 
-            String mostrar = "A las : " + mLastUpdateTime + "\n" +
+            String distancia =  String.valueOf(distanciaEntreHomeYPosicionActual());
+
+            String mostrar = "Hora : " + mLastUpdateTime + "\n" +
                     "Latitud: " + lat + "\n" +
                     "Longitud: " + lng + "\n" +
                     "Precision: " + mCurrentLocation.getAccuracy() + "\n" +
                     "DISTANCIA: " + distancia + "\n" +
                     "ZONA SEGURA: " + inSecureZone + "\n" +
+                    "POOL: " + miFifoPosiciontiempo.size() + "\n" +
                     "Proveedor: " + mCurrentLocation.getProvider();
-
 
             PosicionTiempo miPosicionTiempo = new PosicionTiempo(mCurrentLocation.getLatitude(),
                     mCurrentLocation.getLongitude(),
@@ -263,11 +297,23 @@ public class serviceZonaSegura extends Service implements
                     mLastUpdateTime,
                     inSecureZone);
 
-            /* Se añaden posiciones pero sólo diez */
+            /* Se añaden la posicion a un pool de posiciones, tantas como Constants.DEFAULT_ZONA_SEGURA_POOL */
+            miFifoPosiciontiempo.add(miPosicionTiempo);
 
-            if ( Posiciones.size() < 9 ) {
-                Posiciones.add(miPosicionTiempo);
-            } else {
+            /* Aquí tiene que venir el cálculo de si ha salido de la zona segura */
+
+            //Todas las posiciones de la lista están fuera de la zona segura
+            if ( miFifoPosiciontiempo.listaPosicionTiempoAllNotInZone() ) {
+
+            /* SONIDO */
+                try {
+                    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+                    Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                    r.play();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            /* Fin sonido */
 
             }
 
@@ -329,7 +375,6 @@ public class serviceZonaSegura extends Service implements
         } else {
             return false;
         }
-
     }
 
     protected void stopLocationUpdates() {

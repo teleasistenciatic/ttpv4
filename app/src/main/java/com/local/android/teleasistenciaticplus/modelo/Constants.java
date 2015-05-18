@@ -78,7 +78,7 @@ public interface Constants {
     public static final int MAX_ZONA_SEGURA_RADIO = 5000;
     public static final float DEFAULT_MAP_ZOOM = 15;
 
-    public static final long GPS_READ_INTERVAL = 1000 * 10;
-    public static final long GPS_READ_FASTEST_INTERVAL = 1000 * 5;
+    public static final long GPS_READ_INTERVAL = 1000 * 10; //60*1000 para produccion
+    public static final long GPS_READ_FASTEST_INTERVAL = 1000 * 5; //5*1000 para produccion
 
 }
