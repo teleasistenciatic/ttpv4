@@ -70,6 +70,8 @@ public interface Constants {
     // ZONA SEGURA
     ////////////////////////////////////////////////
 
+    public static final int DEFAULT_ZONA_SEGURA_POOL = 10; //El tamaño de pool del FIFO
+
     public static final double DEFAULT_LATITUDE = 37.886;
     public static final double DEFAULT_LONGITUDE = -4.7486;
 
@@ -78,8 +80,5 @@ public interface Constants {
 
     public static final long GPS_READ_INTERVAL = 1000 * 10;
     public static final long GPS_READ_FASTEST_INTERVAL = 1000 * 5;
-
-
-
 
 }

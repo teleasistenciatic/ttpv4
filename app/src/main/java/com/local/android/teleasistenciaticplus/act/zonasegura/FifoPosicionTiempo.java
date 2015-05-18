@@ -5,14 +5,14 @@ import java.util.LinkedList;
 /**
  *
  * @author FESEJU La clase mantiene una lista enlazada de posiciones en una
- * lista FIFO de un tamaÒo que se fija en el constructor
+ * lista FIFO de un tama√±o que se fija en el constructor
  */
 public class FifoPosicionTiempo {
 
     ////////////////////////////// VARIABLES DE CLASE //////////////////////////
-    private int sizeFifoPool; //El tamaÒo de pool de PosicionTiempo que se va a mantener
+    private int sizeFifoPool; //El tama√±o de pool de PosicionTiempo que se va a mantener
 
-    private final LinkedList<PosicionTiempo> posiciones; //Lista enlazada con el n˙mero de elementos
+    private final LinkedList<PosicionTiempo> posiciones; //Lista enlazada con el n√∫mero de elementos
 
     ////////////////////////////// GETTERS SETTERS /////////////////////////////
     public void setSizeFifoPool(int sizeFifoPool) {
@@ -27,10 +27,10 @@ public class FifoPosicionTiempo {
 
     ////////////////////////////// METODOS DE CLASE ///////////////////////////
     /**
-     * AÒadir Posiciones en una lista enlazada para que sÛlo tengamos un numero
-     * de elementos m·ximo
+     * A√±adir Posiciones en una lista enlazada para que s√≥lo tengamos un numero
+     * de elementos m√°ximo
      *
-     * @param miPosicionTiempo objeto que se va a aÒadir a la lista
+     * @param miPosicionTiempo objeto que se va a a√±adir a la lista
      */
     public void addPosiciones(PosicionTiempo miPosicionTiempo) {
 
@@ -49,17 +49,17 @@ public class FifoPosicionTiempo {
 
     /*
      La cola FIFO que se crea tiene como objetivo no dar un falso positivo
-     en la detecciÛn de salida de una zona segura.
+     en la detecci√≥n de salida de una zona segura.
 
-     Cuando se tienen un numero de muestras de distancias y todas est·n
-     fuera de la ZONA SEGURA, se considerar· -en otra clase- que la persona
+     Cuando se tienen un numero de muestras de distancias y todas est√°n
+     fuera de la ZONA SEGURA, se considerar√° -en otra clase- que la persona
      se halla fuera de ella.
 
      El GPS puede ofrecer lecturas periodicas y alteras entre dos puntos,
      de esta forma se "normalizan" los datos.
 
     Si todos los valores son FALSE, quiere decir que las ultimas muestras
-    est·n fuera de la ZonaSegura y se devuelve
+    est√°n fuera de la ZonaSegura y se devuelve
      */
     public boolean listaPosicionTiempoAllNotInZone() {
 
@@ -77,9 +77,9 @@ public class FifoPosicionTiempo {
 
         }
 
-        //La condiciÛn para que todos est·n en ZonaSegura es que
+        //La condici√≥n para que todos est√°n en ZonaSegura es que
         //todas las mediciones tomadas contengan TRUE
-        //con un sÛlo FALSE no se considera que haya salido de
+        //con un s√≥lo FALSE no se considera que haya salido de
         //la ZonaSegura. Esto es necesario refutarlo con pruebas
 
         //Si todos los valores son FALSE asumimos que ha salido
@@ -90,7 +90,7 @@ public class FifoPosicionTiempo {
             return true;
         } else {
             //False es un valor que no nos vale puesto
-            //que se generarÌa sÛlo en el caso de todos
+            //que se generar√≠a s√≥lo en el caso de todos
             //no sean FALSE. Y eso es un resultado
             //no concluyente
             return false;
@@ -99,7 +99,7 @@ public class FifoPosicionTiempo {
     }
 
     /**
-     * MÈtodo con fines depurativos
+     * M√©todo con fines depurativos
      */
     public void printPosiciones() {
 

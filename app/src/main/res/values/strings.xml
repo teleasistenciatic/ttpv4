@@ -121,6 +121,7 @@
     <string name="zona_segura_texto_estado_inactivo">Servicio detenido</string>
     <string name="zona_segura_establecer_home">Pulse para establecer el hogar</string>
     <string name="zona_segura_label_inicial">Zona Segura</string>
+    <string name="error_google_play_no_zona_segura">Servicio GooglePlayServices no disponible, se suspende el servicio Zona Segura</string>
 
     <!-- Fin cadenas Zona Segura -->
 

@@ -19,23 +19,22 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
+
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
+import com.local.android.teleasistenciaticplus.R;
+import com.local.android.teleasistenciaticplus.lib.helper.AppLog;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
- * Servicio que comprueba la distancia con un punto dado
+ * Servicio Zona Segura que comprueba la distancia con un punto dado
  */
 
 public class serviceZonaSegura extends Service implements
@@ -45,9 +44,6 @@ public class serviceZonaSegura extends Service implements
         Constants {
 
     private static final String TAG = "ZonaSeguraService";
-
-    private static final long INTERVAL = Constants.GPS_READ_INTERVAL;
-    private static final long FASTEST_INTERVAL = Constants.GPS_READ_FASTEST_INTERVAL;
 
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
@@ -59,15 +55,16 @@ public class serviceZonaSegura extends Service implements
     IBinder mBinder;        // interfaz
 
     /* Datos de posicion de zona segura */
-    double zonaSeguraLatitud = 37.898;
-    double zonaSeguraLongitud = -4.724;
-    double zonaSeguraRadio = 50; //radio de seguridad
+    double zonaSeguraLatitud = Constants.DEFAULT_LATITUDE;
+    double zonaSeguraLongitud = Constants.DEFAULT_LONGITUDE;
+    double zonaSeguraRadio;
 
     /* Vector de actualizaciones de posición */
 
-    List<PosicionTiempo> Posiciones = new ArrayList<>();
+    FifoPosicionTiempo miFifoPosiciontiempo = new FifoPosicionTiempo(Constants.DEFAULT_ZONA_SEGURA_POOL);
+    List<PosicionTiempo> Posiciones = new ArrayList<>(); //TODO borrar
 
-    private Timer mTimer = new Timer();
+    //private Timer mTimer = new Timer();
     private final Messenger mMessenger = new Messenger(new IncomingMessageHandler()); // Target we publish for clients to send messages to IncomingHandler.
 
     private static boolean serviceIsRunning = false;
@@ -75,31 +72,32 @@ public class serviceZonaSegura extends Service implements
     /**
      *
      */
-    protected void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(INTERVAL);
-        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    }
-
-    /**
-     *
-     */
     @Override
     public void onCreate() {
+        
         super.onCreate();
-        Log.d(TAG, "Service Started.");
-        Toast.makeText(getBaseContext(), (String) "Servicio iniciado",
-                Toast.LENGTH_SHORT).show();
+        AppLog.d(TAG, "Servicio Zona Segura iniciado.");
+
+        /*Toast.makeText(getBaseContext(), (String) "Servicio iniciado",
+                Toast.LENGTH_SHORT).show();*/
 
         //mTimer.scheduleAtFixedRate(new MyTask(), 0, 2000L);
         serviceIsRunning = true;
 
         //show error dialog if GooglePlayServices not available
         if (!isGooglePlayServicesAvailable()) {
-            //TODO (ya no puede ser finish an ser un servicio)
+            String errorGooglePlay = getResources().getString(R.string.error_google_play_no_zona_segura);
+            Toast.makeText(getBaseContext(), errorGooglePlay, Toast.LENGTH_SHORT).show();
+            AppLog.e(TAG, errorGooglePlay);
+            return;
+
         }
+
+        //Tras crear la petición de posición, cada vez que se produzca un cambio en la posición
+        //se llamará al método onLocationChanged
         createLocationRequest();
+
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
@@ -107,6 +105,17 @@ public class serviceZonaSegura extends Service implements
                 .build();
 
         mGoogleApiClient.connect();
+    }
+
+    /**
+     *
+     */
+    protected void createLocationRequest() {
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(Constants.GPS_READ_INTERVAL);
+        mLocationRequest.setFastestInterval(Constants.GPS_READ_FASTEST_INTERVAL);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     /**
@@ -157,11 +166,13 @@ public class serviceZonaSegura extends Service implements
      */
     @Override
     public void onDestroy() {
+        /*
         // The service is no longer used and is being destroyed
         if (mTimer != null) {
             mTimer.cancel();
-        }
-        Log.i("MyService", "Service Stopped.");
+        }*/
+
+        AppLog.d(TAG, "Servicio detenido.");
         serviceIsRunning = false;
 
         mGoogleApiClient.disconnect();
@@ -169,14 +180,14 @@ public class serviceZonaSegura extends Service implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.d(TAG, "onConnected - isConnected ...............: " + mGoogleApiClient.isConnected());
+        AppLog.d(TAG, "onConnected - isConnected ...............: " + mGoogleApiClient.isConnected());
         startLocationUpdates();
     }
 
     protected void startLocationUpdates() {
         PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
-        Log.d(TAG, "Location update started ..............: ");
+        AppLog.d(TAG, "Location update started ..............: ");
     }
 
     @Override
@@ -186,17 +197,24 @@ public class serviceZonaSegura extends Service implements
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "Connection failed: " + connectionResult.toString());
+        AppLog.d(TAG, "Connection failed: " + connectionResult.toString());
     }
 
+    /**
+     * Cada vez que hay un cambio de posición dentro de los parámetros
+     * establecidos por setInterval.
+     * @param location
+     */
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(TAG, "Firing onLocationChanged..............................................");
+        AppLog.d(TAG, "Firing onLocationChanged...........................................");
+
         mCurrentLocation = location;
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 
+        /////////////////////////////////////
         checkZonaSegura();
-
+        /////////////////////////////////////
     }
 
     /**
@@ -204,7 +222,8 @@ public class serviceZonaSegura extends Service implements
      */
     private void checkZonaSegura() {
 
-        Log.d(TAG, "Check Zona Segura initiated .............");
+        AppLog.d(TAG, "Check Zona Segura initiated .............");
+
         if (null != mCurrentLocation) {
 
             /* Creación de la LatLong */
@@ -227,13 +246,14 @@ public class serviceZonaSegura extends Service implements
 
             String lat = String.valueOf(mCurrentLocation.getLatitude());
             String lng = String.valueOf(mCurrentLocation.getLongitude());
-            String mostrar = "At Time: " + mLastUpdateTime + "\n" +
-                    "Latitude: " + lat + "\n" +
-                    "Longitude: " + lng + "\n" +
-                    "Accuracy: " + mCurrentLocation.getAccuracy() + "\n" +
+
+            String mostrar = "A las : " + mLastUpdateTime + "\n" +
+                    "Latitud: " + lat + "\n" +
+                    "Longitud: " + lng + "\n" +
+                    "Precision: " + mCurrentLocation.getAccuracy() + "\n" +
                     "DISTANCIA: " + distancia + "\n" +
                     "ZONA SEGURA: " + inSecureZone + "\n" +
-                    "Provider: " + mCurrentLocation.getProvider();
+                    "Proveedor: " + mCurrentLocation.getProvider();
 
 
             PosicionTiempo miPosicionTiempo = new PosicionTiempo(mCurrentLocation.getLatitude(),
@@ -251,7 +271,7 @@ public class serviceZonaSegura extends Service implements
 
             }
 
-            Log.d(TAG, mostrar);
+            AppLog.d(TAG, mostrar);
 
             /* SONIDO */
             try {
@@ -266,7 +286,7 @@ public class serviceZonaSegura extends Service implements
             Toast.makeText(getBaseContext(), (String) mostrar,
                     Toast.LENGTH_LONG).show();
         } else {
-            Log.d(TAG, "location is null ...............");
+            AppLog.d(TAG, "location is null ...............");
         }
     }
 
@@ -315,13 +335,17 @@ public class serviceZonaSegura extends Service implements
     protected void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
-        Log.d(TAG, "Location update stopped .......................");
+        AppLog.d(TAG, "Location update stopped .......................");
     }
 
     public static boolean isRunning() {
         return serviceIsRunning;
     }
 
+    /**
+     *
+     * @return
+     */
     private boolean isGooglePlayServicesAvailable() {
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (ConnectionResult.SUCCESS == status) {
@@ -343,15 +367,16 @@ public class serviceZonaSegura extends Service implements
 
         @Override
         public void handleMessage(Message msg) {
-            Log.d(TAG, "handleMessage: " + msg.what);
+            AppLog.d(TAG, "handleMessage: " + msg.what);
         }
 
     }
 
+    /*
     private class MyTask extends TimerTask {
         @Override
         public void run() {
-            Log.d(TAG, "Timer doing work.");
+            AppLog.d(TAG, "Timer doing work.");
 
             try {
                 //counter += incrementBy;
@@ -361,5 +386,5 @@ public class serviceZonaSegura extends Service implements
                 Log.e("TimerTick", "Timer Tick Failed.", t);
             }
         }
-    }
+    }*/
 }
