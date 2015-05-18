@@ -80,7 +80,10 @@ public class actUserOptionsZonaSegura extends Activity implements ServiceConnect
             case R.id.zona_segura_boton_arrancar:
 
                 /////////////////////// ARRANCAR EL SERVICIO ////////////////////////////////
-                bindService(new Intent(this, serviceZonaSegura.class), mConnection, getApplicationContext().BIND_AUTO_CREATE);
+                //bindService(new Intent(this, serviceZonaSegura.class), mConnection, getApplicationContext().BIND_AUTO_CREATE);
+
+                Intent intentA=new Intent(this, serviceZonaSegura.class);
+                startService(intentA);
 
                 AppLog.d(TAG, "Servicio Iniciado");
                 texto.setText(R.string.zona_segura_texto_estado_activo);
@@ -91,7 +94,8 @@ public class actUserOptionsZonaSegura extends Activity implements ServiceConnect
             case R.id.zona_segura_boton_parar:
 
                 /////////////////////// PARAR EL SERVICIO ////////////////////////////////
-                unbindService(mConnection);
+
+                /*unbindService(mConnection);*/
                 Intent intent = new Intent(this, serviceZonaSegura.class);
                 stopService(intent);
 
@@ -102,6 +106,19 @@ public class actUserOptionsZonaSegura extends Activity implements ServiceConnect
                 break;
         }
     }
+
+    /*            case R.id.caidas_boton_arrancar:
+                //arrancar el servicio ?
+                Intent intentA=new Intent(this, ServicioMuestreador.class);
+                startService(intentA);
+                texto.setText(R.string.caidas_texto_estado_activo);
+                break;
+            case R.id.caidas_boton_parar:
+                //parar el servicio ?
+                Intent intentB=new Intent(this, ServicioMuestreador.class);
+                stopService(intentB);
+                texto.setText(R.string.caidas_texto_estado_inactivo);
+                break;*/
 
     ///////////////////////////// MENUS ///////////////////////////////
     @Override

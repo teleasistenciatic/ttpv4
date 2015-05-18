@@ -52,6 +52,10 @@ public class FifoPosicionTiempo {
         return posiciones.size();
     }
 
+    public void clear() {
+        posiciones.clear();
+    }
+
     /*
      La cola FIFO que se crea tiene como objetivo no dar un falso positivo
      en la detección de salida de una zona segura.

@@ -70,7 +70,7 @@ public interface Constants {
     // ZONA SEGURA
     ////////////////////////////////////////////////
 
-    public static final int DEFAULT_ZONA_SEGURA_POOL = 4; //El tamaño de pool del FIFO
+    public static final int DEFAULT_ZONA_SEGURA_POOL = 10; //El tamaño de pool del FIFO
 
     public static final double DEFAULT_LATITUDE = 37.886;
     public static final double DEFAULT_LONGITUDE = -4.7486;

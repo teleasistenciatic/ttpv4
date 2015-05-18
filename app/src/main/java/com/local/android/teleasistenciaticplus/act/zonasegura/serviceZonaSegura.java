@@ -274,7 +274,7 @@ public class serviceZonaSegura extends Service implements
             String lat = String.valueOf(mCurrentLocation.getLatitude());
             String lng = String.valueOf(mCurrentLocation.getLongitude());
 
-            String distancia =  String.valueOf(distanciaEntreHomeYPosicionActual());
+            String distancia =  String.valueOf( distanciaEntreHomeYPosicionActual() );
 
             String mostrar = "Hora : " + mLastUpdateTime + "\n" +
                     "Latitud: " + lat + "\n" +
@@ -297,8 +297,14 @@ public class serviceZonaSegura extends Service implements
 
             /* Aquí tiene que venir el cálculo de si ha salido de la zona segura */
 
+            //////////////////////////////////////////////////////////////////////
+            /////////////// SALIDA ZONA SEGURA ///////////////////////////////////
+            //////////////////////////////////////////////////////////////////////
             //Todas las posiciones de la lista están fuera de la zona segura
             if ( miFifoPosiciontiempo.listaPosicionTiempoAllNotInZone() ) {
+
+                //Limpiamos la pila de posicionestiempo
+                miFifoPosiciontiempo.clear();
 
                 //Si estamos en modo depuración se indica
                 if ( (Constants.PLAY_SOUNDS) && (Constants.DEBUG_LEVEL == DebugLevel.DEBUG)) {
@@ -306,6 +312,7 @@ public class serviceZonaSegura extends Service implements
                 }
 
             }
+            ////////////////////////////////////////////////////////////////////////
 
             AppLog.d(TAG, mostrar);
 
@@ -314,8 +321,8 @@ public class serviceZonaSegura extends Service implements
                 PlaySound.play(R.raw.zonasegura_gps_leido);
             }
 
-            /*Toast.makeText(getBaseContext(), (String) mostrar,
-                    Toast.LENGTH_LONG).show();*/
+            Toast.makeText(getBaseContext(), (String) mostrar,
+                    Toast.LENGTH_LONG).show();
         } else {
             AppLog.d(TAG, "location is null ...............");
         }
@@ -348,12 +355,18 @@ public class serviceZonaSegura extends Service implements
         //Procesamos la distancia teniendo en cuenta el radio de la zona segura
         //y la precisión de la medición
 
-        double distancia = resultado[0] + accuracy;
+        double distancia;
+
+        if ( resultado[0] > accuracy ) {
+            distancia = resultado[0] - accuracy;
+        } else { //Si la precision es demasiado grande no podemos fiarnos
+            distancia = 0;
+        }
 
         // Mientras el beneficiario se encuentre a menos distancia que el radio se considera que está seguro
         // la distancia es entre el punto definido como casa y la posición actual de GPS
-        // A la distancia que tenemos hay que sumarle la precisión. Si nos da 50m de distancia pero 78 metros de
-        // precisión, en el peor caso estará a 50mm + 78mm.
+        // A la distancia que tenemos hay que restarle la precisión. Si nos da 50m de distancia pero 78 metros de
+        // precisión, en el peor caso estará a 50mm - 78mm.
 
         if ( distancia < secureZoneRadius ) {
             return true;
