@@ -26,6 +26,7 @@ import com.google.android.gms.location.LocationServices;
 import com.local.android.teleasistenciaticplus.R;
 import com.local.android.teleasistenciaticplus.lib.helper.AppLog;
 import com.local.android.teleasistenciaticplus.lib.helper.AppSharedPreferences;
+import com.local.android.teleasistenciaticplus.lib.helper.AppTime;
 import com.local.android.teleasistenciaticplus.lib.sms.SmsLauncher;
 import com.local.android.teleasistenciaticplus.lib.sound.PlaySound;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
@@ -245,7 +246,8 @@ public class serviceZonaSegura extends Service implements
         AppLog.d(TAG, "Firing onLocationChanged...........................................");
 
         mCurrentLocation = location;
-        mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+        //mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+        mLastUpdateTime = new AppTime().getTimeDate();
 
         /////////////////////////////////////
         checkZonaSegura();
@@ -344,6 +346,8 @@ public class serviceZonaSegura extends Service implements
                 SmsLauncher miSmsLauncher = new SmsLauncher(TipoAviso.SALIDAZONASEGURA);
                 Boolean hayListaContactos = miSmsLauncher.generateAndSend();
 
+                AppLog.i(TAG,"SMS de aviso de Zona Segura enviado");
+
                 /////////////////////////////////////////////////
             }
             ////////////////////////////////////////////////////////////////////////
@@ -355,8 +359,11 @@ public class serviceZonaSegura extends Service implements
                 PlaySound.play(R.raw.zonasegura_gps_leido);
             }
 
-            Toast.makeText(getBaseContext(), (String) mostrar,
-                    Toast.LENGTH_LONG).show();
+            if ( (Constants.DEBUG_LEVEL == DebugLevel.DEBUG) && (Constants.TOAST_DATOS_ZONA_SEGURA)) {
+                Toast.makeText(getBaseContext(), (String) mostrar,
+                        Toast.LENGTH_LONG).show();
+            }
+
         } else {
             AppLog.d(TAG, "location is null ...............");
         }
