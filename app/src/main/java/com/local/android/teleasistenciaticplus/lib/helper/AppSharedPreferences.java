@@ -259,7 +259,7 @@ public class AppSharedPreferences implements Constants {
     // Lee posicion GPS
     public String[] getGpsPos() {
 
-        String[] gpsPosicion = new String[3];
+        String[] gpsPosicion = new String[4];
 
         gpsPosicion[0] = getPreferenceData(Constants.GPS_LATITUD);
         gpsPosicion[1] =  getPreferenceData(Constants.GPS_LONGITUD);

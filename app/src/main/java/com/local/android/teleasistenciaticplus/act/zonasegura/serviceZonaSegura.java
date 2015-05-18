@@ -26,9 +26,11 @@ import com.google.android.gms.location.LocationServices;
 import com.local.android.teleasistenciaticplus.R;
 import com.local.android.teleasistenciaticplus.lib.helper.AppLog;
 import com.local.android.teleasistenciaticplus.lib.helper.AppSharedPreferences;
+import com.local.android.teleasistenciaticplus.lib.sms.SmsLauncher;
 import com.local.android.teleasistenciaticplus.lib.sound.PlaySound;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
 import com.local.android.teleasistenciaticplus.modelo.DebugLevel;
+import com.local.android.teleasistenciaticplus.modelo.TipoAviso;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -334,6 +336,15 @@ public class serviceZonaSegura extends Service implements
                     PlaySound.play(R.raw.zonasegura_ha_salido_zonasegura);
                 }
 
+                /////////////////////////////////////////////////
+                /////////////// ENVIO DE SMS DE AVISO ///////////
+                /////////////////////////////////////////////////
+
+                //código para el envio de sms.
+                SmsLauncher miSmsLauncher = new SmsLauncher(TipoAviso.SALIDAZONASEGURA);
+                Boolean hayListaContactos = miSmsLauncher.generateAndSend();
+
+                /////////////////////////////////////////////////
             }
             ////////////////////////////////////////////////////////////////////////
 

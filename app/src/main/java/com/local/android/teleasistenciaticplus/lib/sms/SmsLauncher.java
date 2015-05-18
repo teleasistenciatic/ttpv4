@@ -46,15 +46,19 @@ public class SmsLauncher {
                     break;
 
                     case AVISO:
-                        textoSms = new SmsTextGenerator().getTextGenerateSmsAviso( telefonos[i] );
+                        textoSms = new SmsTextGenerator().getTextGenerateSmsAviso(telefonos[i]);
                         break;
 
                     case IAMOK:
-                        textoSms = new SmsTextGenerator().getTextGenerateSmsIamOK( telefonos[i] );
+                        textoSms = new SmsTextGenerator().getTextGenerateSmsIamOK(telefonos[i]);
                         break;
 
                     case CAIDADETECTADA:
-                        textoSms= new SmsTextGenerator().getTextGenerateSmsCaida( telefonos[i] );
+                        textoSms= new SmsTextGenerator().getTextGenerateSmsCaida(telefonos[i]);
+                        break;
+
+                    case SALIDAZONASEGURA:
+                        textoSms= new SmsTextGenerator().getTextGenerateSmsSalidaZonaSegura( telefonos[i] );
                         break;
                 }
 

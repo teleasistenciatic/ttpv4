@@ -19,8 +19,11 @@ public class SmsTextGenerator {
     public SmsTextGenerator() {
 
         String[] nombreApellidos = new AppSharedPreferences().getUserData();
+        String[] gps = new AppSharedPreferences().getGpsPos();
         //Para evitar los problemas al enviar SMS's, se eliminan los caracteres como los acentos
+
         DataSanitize miDataSanitize = new DataSanitize();
+
         this.nombre = miDataSanitize.cambiaCaracteresEspanolesPorIngleses(nombreApellidos[0]);
         this.apellidos = miDataSanitize.cambiaCaracteresEspanolesPorIngleses(nombreApellidos[1]);
 
@@ -49,6 +52,11 @@ public class SmsTextGenerator {
 
     public String getTextGenerateSmsCaida(String phoneNumberDestination){
         String smsBodyText = nombreApp + ": " + nombre + " " + apellidos + " ha generado un aviso de caida" + currentDateandTime;
+        return smsBodyText;
+    }
+
+    public String getTextGenerateSmsSalidaZonaSegura(String phoneNumberDestination){
+        String smsBodyText = nombreApp + ": " + nombre + " " + apellidos + " ha generado un aviso de salida de zona segura" + currentDateandTime;
         return smsBodyText;
     }
 
