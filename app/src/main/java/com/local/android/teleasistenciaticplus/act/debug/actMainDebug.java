@@ -43,7 +43,8 @@ public class actMainDebug extends Activity {
                     "Google Services", //id 7
                     "Google Maps", //id 8
                     "Detección de caidas", //id 9
-                    "Monitor de batería" //id 10
+                    "Monitor de batería", //id 10
+                    "GPS y SharedPreferences" //id 11
             };
 
             /// Creación del adaptador con su String
@@ -97,6 +98,9 @@ public class actMainDebug extends Activity {
                             break;
                         case 10: //"Monitor de Batería"
                             actToLoad = actDebugOjeadorBateria.class;
+                            break;
+                        case 11: //"Shared Preferences"
+                            actToLoad = actDebugGpsSharedPreferences.class;
                             break;
                     }
 

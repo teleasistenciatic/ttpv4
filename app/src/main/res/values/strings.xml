@@ -151,6 +151,10 @@
 
     <!-- Mensajes del Widget -->
     <string name="widget_image_button_description">Pulse para iniciar Tele Asistencia TIC+</string>
+    <string name="title_activity_act_debug_gps_shared_preferences">actDebugGpsSharedPreferences
+    </string>
+
+    <string name="hello_world">Hello world!</string>
     <!-- Fin Widget -->
 
 </resources>

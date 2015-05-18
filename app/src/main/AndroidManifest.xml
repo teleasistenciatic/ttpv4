@@ -16,7 +16,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- Telefono -->
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <!-- Almacenamiento -->
@@ -66,14 +66,11 @@
             android:relinquishTaskIdentity="true"
             android:screenOrientation="portrait"
             android:theme="@style/fullscreen" >
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-
-
         </activity>
 
         <!-- Actividad principal Modo Offline -->
@@ -91,13 +88,13 @@
             android:name=".act.debug.actMainDebug"
             android:label="@string/title_activity_act_main_debug"
             android:parentActivityName=".act.main.actMain"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".act.debug.actDebugMemory"
             android:label="@string/title_activity_act_debug_memory"
             android:parentActivityName=".act.debug.actMainDebug"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".act.debug.actDebugDataConnection"
@@ -115,34 +112,34 @@
             android:name=".act.debug.actDebugShowLog"
             android:label="@string/title_activity_act_debug_show_log"
             android:parentActivityName=".act.debug.actMainDebug"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".act.debug.actDebugSMS"
             android:label="@string/title_activity_act_debug_sms"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".act.debug.actDebugChronometer"
             android:label="@string/title_activity_act_debug_ducha"
             android:parentActivityName=".act.debug.actMainDebug"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".act.debug.actDebugGoogleServices"
             android:label="@string/title_activity_act_debug_google_services"
             android:parentActivityName=".act.debug.actMainDebug"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".act.debug.actDebugGoogleMaps"
             android:label="@string/title_activity_act_debug_google_maps"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".act.debug.actDebugOjeadorBateria"
             android:label="@string/title_activity_act_debug_monitor_bateria"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <!-- Fin actividades Depuración -->
 
@@ -152,24 +149,23 @@
         <activity
             android:name=".act.user.actUserOptions"
             android:label="@string/title_activity_act_user_options"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".act.user.actUserOptionsDatosPersonales"
             android:label="@string/title_activity_act_user_options_datos_personales"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".act.user.actUserOptionsPersonaContacto"
             android:label="@string/title_activity_act_user_options_persona_contacto"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".act.debug.actDebugUserConfig"
             android:label="@string/title_activity_act_debug_user_config"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
-
         <activity
             android:name=".act.debug.actDebugCaidas"
             android:label="@string/title_activity_act_debug_caidas"
@@ -185,13 +181,13 @@
         <activity
             android:name=".act.ducha.actModoDucha"
             android:label="@string/title_activity_act_modo_ducha"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".act.ducha.actDuchaCuentaAtras"
             android:label="@string/title_activity_act_ducha_cuenta_atras"
             android:parentActivityName=".act.ducha.actModoDucha"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.local.android.teleasistenciaticplus.act.ducha.actModoDucha" />
@@ -204,7 +200,7 @@
         <activity
             android:name=".act.actMensajeTarificacionExtra"
             android:label="@string/title_activity_act_mensaje_tarificacion_extra"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <!-- Fin mensaje de tarificación extra -->
 
@@ -225,29 +221,33 @@
         <activity
             android:name=".act.user.actUserOptionsCaidas"
             android:label="@string/title_activity_act_user_options_caidas"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
 
         <!-- Actividad y servicio de Zona Segura -->
         <activity
             android:name=".act.user.actUserOptionsZonaSegura"
             android:label="@string/title_activity_act_user_options_zona_segura"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
-
         <activity
             android:name=".act.zonasegura.actZonaSeguraHomeSet"
             android:label="@string/title_activity_act_zona_segura_set_home"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
 
         <service
             android:name=".act.zonasegura.serviceZonaSegura"
-            android:process=":miserviciozonasegura"
-            android:exported="false" > //Solo se puede llamar por nuestra aplicación //
+            android:exported="false"
+            android:process=":miserviciozonasegura" >
+ //Solo se puede llamar por nuestra aplicación //
         </service>
         <!-- Fin actividad y servicio de Zona Segura -->
 
+        <activity
+            android:name=".act.debug.actDebugGpsSharedPreferences"
+            android:label="@string/title_activity_act_debug_gps_shared_preferences" >
+        </activity>
     </application>
 
 </manifest>
