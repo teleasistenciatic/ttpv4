@@ -243,7 +243,7 @@
 
         <service
             android:name=".act.zonasegura.serviceZonaSegura"
-            android:process=":myservicename"
+            android:process=":miserviciozonasegura"
             android:exported="false" > //Solo se puede llamar por nuestra aplicación //
         </service>
         <!-- Fin actividad y servicio de Zona Segura -->

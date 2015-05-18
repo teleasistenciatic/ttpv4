@@ -22,6 +22,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.local.android.teleasistenciaticplus.modelo.Constants;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -40,12 +41,13 @@ import java.util.TimerTask;
 public class serviceZonaSegura extends Service implements
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        Constants {
 
     private static final String TAG = "ZonaSeguraService";
 
-    private static final long INTERVAL = 1000 * 10;
-    private static final long FASTEST_INTERVAL = 1000 * 5;
+    private static final long INTERVAL = Constants.GPS_READ_INTERVAL;
+    private static final long FASTEST_INTERVAL = Constants.GPS_READ_FASTEST_INTERVAL;
 
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
@@ -64,32 +66,6 @@ public class serviceZonaSegura extends Service implements
     /* Vector de actualizaciones de posición */
 
     List<PosicionTiempo> Posiciones = new ArrayList<>();
-
-    class PosicionTiempo {
-
-        Double latitude;
-        Double longitude;
-        float accuracy;
-        String provider;
-        String time;
-        Boolean inZone;
-
-        public PosicionTiempo(Double latitude,
-                              Double longitude,
-                              float accuracy,
-                              String provider,
-                              String time,
-                              Boolean inZone) {
-
-            this.latitude = latitude;
-            this.longitude = longitude;
-            this.accuracy = accuracy;
-            this.provider = provider;
-            this.time = time;
-            this.inZone = inZone;
-        }
-    }
-
 
     private Timer mTimer = new Timer();
     private final Messenger mMessenger = new Messenger(new IncomingMessageHandler()); // Target we publish for clients to send messages to IncomingHandler.
