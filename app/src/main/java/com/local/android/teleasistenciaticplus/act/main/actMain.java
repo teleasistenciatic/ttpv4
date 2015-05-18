@@ -19,6 +19,7 @@ import com.local.android.teleasistenciaticplus.act.ducha.actModoDucha;
 import com.local.android.teleasistenciaticplus.act.user.actUserOptions;
 import com.local.android.teleasistenciaticplus.act.user.actUserOptionsDatosPersonales;
 import com.local.android.teleasistenciaticplus.act.user.actUserOptionsPersonaContacto;
+import com.local.android.teleasistenciaticplus.act.zonasegura.serviceZonaSegura;
 import com.local.android.teleasistenciaticplus.lib.detectorCaidas.ServicioMuestreador;
 import com.local.android.teleasistenciaticplus.lib.helper.AppDialog;
 import com.local.android.teleasistenciaticplus.lib.helper.AppLog;
@@ -61,8 +62,10 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
         SMSOKButton = (ImageButton) findViewById(R.id.btnIamOK);
 
         //Damos la bienvenida
-        if (Constants.PLAY_SOUNDS) {
+        if ( (Constants.PLAY_SOUNDS) && (Constants.PLAY_BIENVENIDO_SOUND) ) {
+
             PlaySound.play(R.raw.bienvenido);
+
         }
 
         /////////////////////////////////////////////////////////////
@@ -114,6 +117,20 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
             Intent intentA= new Intent(this,ServicioMuestreador.class);
             startService(intentA);
             AppLog.i(TAG,"caidas creado y activo");
+        }
+
+        ////////////////////////////////////////////////
+        // Se inicia el servicio Zona Segura
+        /////////////////////////////////////////////
+        String zonaSeguraArrancarAlInicio = mispreferences.getPreferenceData(Constants.ZONA_SEGURA_ARRANCAR_AL_INICIO);
+
+        if( zonaSeguraArrancarAlInicio.equals("true") ) {   //si esta indicado arranco el servicio
+
+            Intent intentA= new Intent(this, serviceZonaSegura.class);
+            startService(intentA);
+
+            AppLog.i(TAG,"Servicio Zona Segura cargado al inicio ");
+
         }
 
     }

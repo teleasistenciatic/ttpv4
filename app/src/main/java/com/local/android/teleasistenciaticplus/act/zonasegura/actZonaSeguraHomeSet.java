@@ -10,6 +10,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -186,19 +187,25 @@ public class actZonaSeguraHomeSet extends FragmentActivity
 
     private void drawMarkerWithCircle(LatLng point, double radio) {
         double radiusInMeters = radio;
-        int strokeColor = 0xffff0000; //red outline
-        int shadeColor = 0x44ff0000; //opaque red fill
+        //int strokeColor = 0xffff0000; //red outline
+        //int shadeColor = 0x44ff0000; //opaque red fill
+        int strokeColor = 0x3300aa33;
+        int shadeColor = 0x3300aa33;
 
 
         CircleOptions circleOptions = new CircleOptions().center(point).radius(radiusInMeters).fillColor(shadeColor).strokeColor(strokeColor).strokeWidth(1);
         mCircle = map.addCircle(circleOptions);
 
         //Añadimos el marcador
-        miMarker = map.addMarker(new MarkerOptions().
+        miMarker = map.addMarker(
+
+                new MarkerOptions().
                         position(point).
                         title(point.toString()).
-                        draggable(true)
-        );
+                        draggable(true).
+                        icon( BitmapDescriptorFactory.fromResource( R.drawable.zonasegura_home_marker) )
+
+                );
 
         //Guardamos los valores en el Shared Preferences
         new AppSharedPreferences().setZonaSeguraData(point, radio);

@@ -27,6 +27,7 @@ public interface Constants {
     public static final long MEMORY_DIVIDER = 1048576L; //BytestoMegabytes
     public static final boolean SHOW_ANIMATION = true; //Decide si se realizan transiciones entre actividades o fragmentos
     public static final boolean PLAY_SOUNDS = true; //Decide si se reproducen sonidos en la aplicación
+    public static final boolean PLAY_BIENVENIDO_SOUND = false; //Decide si se reproducen el infernal sonido de bienvenida
 
         /*
         1024 bytes      == 1 kilobyte
@@ -61,10 +62,16 @@ public interface Constants {
 
     public static final String NOMBRE_APP_SHARED_PREFERENCES_DATETIME_ULTIMO_SMS_ENVIADO = "ultimosmsenviado";
 
-    public static final String ZONA_SEGURA = "zonasegura";
+    public static final String ZONA_SEGURA_ARRANCAR_AL_INICIO = "zonasegura";
+    public static final String ZONA_SEGURA_SERVICIO_INICIADO = "zonaseguraservicioiniciado";
     public static final String ZONA_SEGURA_LATITUD = "zonaseguralatitud";
     public static final String ZONA_SEGURA_LONGITUD = "zonaseguralongitud";
     public static final String ZONA_SEGURA_RADIO = "zonaseguraradio";
+
+    public static final String GPS_LATITUD = "gpslatitud";
+    public static final String GPS_LONGITUD = "gpslongitud";
+    public static final String GPS_PRECISION = "gpsprecision";
+    public static final String GPS_ULTIMA_ACTUALIZACION = "gpsultimaactualizacion";
 
     ////////////////////////////////////////////////
     // ZONA SEGURA

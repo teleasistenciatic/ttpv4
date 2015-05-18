@@ -25,7 +25,7 @@ public class actUserOptionsZonaSegura extends Activity implements ServiceConnect
     private TextView texto;
     String TAG = "actUserOptionsZonaSegura";
 
-    private ServiceConnection mConnection = this;
+    //private ServiceConnection mConnection = this; //Solo para el Bind
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +40,19 @@ public class actUserOptionsZonaSegura extends Activity implements ServiceConnect
         CheckBox micheckbox = (CheckBox) findViewById(R.id.zona_segura_checkbox);
         texto = (TextView) findViewById(R.id.zona_segura_texto_estado_servicio);
 
-        String valor = userSharedPreferences.getPreferenceData(Constants.ZONA_SEGURA);
+        String valor = userSharedPreferences.getPreferenceData(Constants.ZONA_SEGURA_ARRANCAR_AL_INICIO);
 
-        if (valor.equals(Constants.ACTIVO)) {
+        if (valor.equals("true")) {
             micheckbox.setChecked(true);
-            texto.setText(R.string.zona_segura_texto_estado_activo);
         } else {
             micheckbox.setChecked(false);
+        }
+
+        String servicioIniciado = userSharedPreferences.getPreferenceData(Constants.ZONA_SEGURA_SERVICIO_INICIADO);
+
+        if (servicioIniciado.equals("true")) {
+            texto.setText(R.string.zona_segura_texto_estado_activo);
+        } else {
             texto.setText(R.string.zona_segura_texto_estado_inactivo);
         }
     }
@@ -71,9 +77,9 @@ public class actUserOptionsZonaSegura extends Activity implements ServiceConnect
 
                 boolean checked = ((CheckBox) v).isChecked();
                 if (checked) {
-                    userSharedPreferences.setPreferenceData(Constants.ZONA_SEGURA, Constants.ACTIVO);
+                    userSharedPreferences.setPreferenceData(Constants.ZONA_SEGURA_ARRANCAR_AL_INICIO, "true");
                 } else {
-                    userSharedPreferences.setPreferenceData(Constants.ZONA_SEGURA, Constants.INACTIVO);
+                    userSharedPreferences.setPreferenceData(Constants.ZONA_SEGURA_ARRANCAR_AL_INICIO, "false");
                 }
                 break;
 

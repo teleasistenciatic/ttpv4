@@ -1,7 +1,9 @@
 package com.local.android.teleasistenciaticplus.act.zonasegura;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -64,8 +66,6 @@ public class serviceZonaSegura extends Service implements
     //private Timer mTimer = new Timer();
     private final Messenger mMessenger = new Messenger(new IncomingMessageHandler()); // Target we publish for clients to send messages to IncomingHandler.
 
-    private static boolean serviceIsRunning = false;
-
     /**
      *
      */
@@ -79,7 +79,13 @@ public class serviceZonaSegura extends Service implements
                 Toast.LENGTH_SHORT).show();*/
 
         //mTimer.scheduleAtFixedRate(new MyTask(), 0, 2000L);
-        serviceIsRunning = true;
+
+        //Se indica que el servicio está funcionando
+        try {
+            setSharedPreferenceData(Constants.ZONA_SEGURA_SERVICIO_INICIADO, "true");
+        } catch (Exception e) {
+            AppLog.e(TAG,"Error fatal al guardar SharedPreferences",e);
+        }
 
         //show error dialog if GooglePlayServices not available
         if (!isGooglePlayServicesAvailable()) {
@@ -101,6 +107,7 @@ public class serviceZonaSegura extends Service implements
 
             String errorZonaSegura = getResources().getString(R.string.error_zona_segura_no_home_set);
             Toast.makeText(getBaseContext(), errorZonaSegura, Toast.LENGTH_LONG).show();
+
             AppLog.e(TAG, errorZonaSegura);
             return; //Salida del servicio
 
@@ -195,7 +202,11 @@ public class serviceZonaSegura extends Service implements
         }*/
 
         AppLog.d(TAG, "Servicio detenido.");
-        serviceIsRunning = false;
+        try {
+            setSharedPreferenceData(Constants.ZONA_SEGURA_SERVICIO_INICIADO, "false");
+        } catch ( Exception e ) {
+            AppLog.e(TAG, "Error fatal al guardar las SharedPreferences", e);
+        }
 
         mGoogleApiClient.disconnect();
     }
@@ -295,6 +306,18 @@ public class serviceZonaSegura extends Service implements
             /* Se añaden la posicion a un pool de posiciones, tantas como Constants.DEFAULT_ZONA_SEGURA_POOL */
             miFifoPosiciontiempo.add(miPosicionTiempo);
 
+            try {
+                setSharedPreferenceDataGps(
+                        String.valueOf(mCurrentLocation.getLatitude()),
+                        String.valueOf(mCurrentLocation.getLongitude()),
+                        String.valueOf(mCurrentLocation.getAccuracy()),
+                        String.valueOf(mLastUpdateTime)
+                );
+            } catch (Exception e) {
+                AppLog.e(TAG, "Error al escribir las shared preferences", e);
+            }
+
+
             /* Aquí tiene que venir el cálculo de si ha salido de la zona segura */
 
             //////////////////////////////////////////////////////////////////////
@@ -381,9 +404,10 @@ public class serviceZonaSegura extends Service implements
         AppLog.d(TAG, "Location update stopped .......................");
     }
 
+    /*
     public static boolean isRunning() {
         return serviceIsRunning;
-    }
+    }*/
 
     /**
      *
@@ -415,6 +439,30 @@ public class serviceZonaSegura extends Service implements
 
     }
 
+
+    //////////////////////////////////////////// GETTER SETTER APPSHAREDPREFERENCES ////////////////////
+    public void setSharedPreferenceData(String map, String valor) {
+        SharedPreferences.Editor editor = getSharedPreferences(APP_SHARED_PREFERENCES_FILE, Context.MODE_MULTI_PROCESS).edit();
+        editor.putString(map, valor);
+        editor.commit();
+    }
+
+    public void setSharedPreferenceDataGps(String latitud, String longitud, String precision, String ultimaActualizacion) {
+        setSharedPreferenceData(Constants.GPS_LATITUD, latitud);
+        setSharedPreferenceData(Constants.GPS_LONGITUD, longitud);
+        setSharedPreferenceData(Constants.GPS_PRECISION, precision);
+        setSharedPreferenceData(Constants.GPS_ULTIMA_ACTUALIZACION, ultimaActualizacion);
+    }
+
+    /*
+    public String getSharedPreferenceData(String map) {
+
+        SharedPreferences prefs = getSharedPreferences(APP_SHARED_PREFERENCES_FILE, Context.MODE_MULTI_PROCESS);
+        String value = prefs.getString(map, "");
+
+        return value;
+    }*/
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
     /*
     private class MyTask extends TimerTask {
         @Override
