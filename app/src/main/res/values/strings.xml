@@ -20,6 +20,14 @@
         sobre la tarificación de los mensajes de texto (SMS).
     </string>
 
+    <string name="politica_de_uso_linea_1">La presente aplicación es el fruto de un proyecto de investigación y
+        aún se encuentra en fase de pruebas. Toda la responsabilidad de uso recae en el usuario/a de la misma. La aplicación y todos los derechos están
+        reservados y son propiedad de Fundación MAGTEL.
+    </string>
+
+    <string name="politica_de_uso_linea_2">
+    </string>
+
     <!-- Cadenas por defecto -->
 
 
@@ -144,11 +152,11 @@
     <!-- Fin Modo Ducha -->
 
     <!-- Aviso de coste de SMS -->
-    <string name="aceptar">Aceptar</string>
+    <string name="aceptar">Acepto las condiciones de uso</string>
     <string name="no_volver_a_mostrar">no volver a mostrar este mensaje</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
-    <string name="title_activity_act_mensaje_tarificacion_extra">Advertencia tarificación SMS</string>
+    <string name="title_activity_act_mensaje_tarificacion_extra">Politica de uso y tarificación SMS</string>
     <!-- fin Relacionadas SMS -->
 
     <!-- Mensajes del Widget -->

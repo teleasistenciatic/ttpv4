@@ -11,7 +11,7 @@ import com.local.android.teleasistenciaticplus.act.main.actMain;
 import com.local.android.teleasistenciaticplus.lib.helper.AppSharedPreferences;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
 
-public class actMensajeTarificacionExtra extends Activity {
+public class actMensajeTarificacionExtraYPoliticaDeUso extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +35,7 @@ public class actMensajeTarificacionExtra extends Activity {
 
         //Cargamos la aplicación principal
         Intent mainIntent;
-        mainIntent = new Intent().setClass(actMensajeTarificacionExtra.this, actMain.class);
+        mainIntent = new Intent().setClass(actMensajeTarificacionExtraYPoliticaDeUso.this, actMain.class);
         startActivity(mainIntent);
 
         finish();

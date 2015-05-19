@@ -58,7 +58,7 @@ public class actLoadingScreen extends Activity implements Constants {
 
                 } else {
 
-                    mainIntent = new Intent().setClass(actLoadingScreen.this, actMensajeTarificacionExtra.class);
+                    mainIntent = new Intent().setClass(actLoadingScreen.this, actMensajeTarificacionExtraYPoliticaDeUso.class);
 
                 }
 

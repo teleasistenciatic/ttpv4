@@ -203,7 +203,7 @@
 
         <!-- Mensaje de tarificación extra -->
         <activity
-            android:name=".act.actMensajeTarificacionExtra"
+            android:name=".act.actMensajeTarificacionExtraYPoliticaDeUso"
             android:label="@string/title_activity_act_mensaje_tarificacion_extra"
             android:screenOrientation="portrait" >
         </activity>
