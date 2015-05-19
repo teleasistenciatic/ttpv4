@@ -57,7 +57,7 @@ class Monitor implements Constants{
         //************ Captura datos de fichero.
 
         GestorFicheros gestorFicheros=new GestorFicheros(resources);
-        gestorFicheros.leerArchivoPesos(ARCHIVO_RED);
+        gestorFicheros.leerArchivoPesos(DETECTOR_CAIDAS_ARCHIVO_RED);
         LinkedList listaDatos1=gestorFicheros.dameLista(0);
         LinkedList listaDatos2=gestorFicheros.dameLista(1);
         LinkedList listaDatos3=gestorFicheros.dameLista(2);

@@ -28,14 +28,23 @@ public class actUserOptionsCaidas extends Activity {
         CheckBox micheckbox=(CheckBox) findViewById(R.id.caidas_checkbox);
         texto = (TextView) findViewById(R.id.caidas_texto_estado);
 
+        //marcar checkbox si esta configurado
         String valor=userSharedPreferences.getPreferenceData(Constants.DETECTOR_CAIDAS_ARRANCAR_AL_INICIO);
         if( valor.equals(Constants.DETECTOR_CAIDAS_ACTIVAR)){
             micheckbox.setChecked(true);
-            texto.setText(R.string.caidas_texto_estado_activo);
         }else{
             micheckbox.setChecked(false);
+        }
+
+        //comprueba si el servicio está iniciado o no.
+        String valor_servicio=userSharedPreferences.getPreferenceData(Constants.DETECTOR_CAIDAS_SERVICIO_INICIADO);
+        if(valor_servicio.equals("true")){
+            texto.setText(R.string.caidas_texto_estado_activo);
+        }else{
             texto.setText(R.string.caidas_texto_estado_inactivo);
         }
+
+
     }
 
     @Override

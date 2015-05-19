@@ -3,6 +3,7 @@ package com.local.android.teleasistenciaticplus.lib.detectorCaidas;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -12,15 +13,17 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.preference.PreferenceManager;
 
 import com.local.android.teleasistenciaticplus.lib.helper.AppLog;
+import com.local.android.teleasistenciaticplus.modelo.Constants;
 
 /**
  * Servicio encargado de escuchar el sensor acelerómetro y procesar los datos
  *
  * Created by SAMUAN on 13/04/2015.
  */
-public class ServicioMuestreador extends Service implements SensorEventListener {
+public class ServicioMuestreador extends Service implements SensorEventListener, Constants {
 
     private Monitor monitor;
     private WakeLock wakeLock;
@@ -60,7 +63,8 @@ public class ServicioMuestreador extends Service implements SensorEventListener 
         AppLog.i(TAG, "servicio onStartcommmand " + startId);
         wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
         wakeLock.acquire();
-        sensor.registerListener(ServicioMuestreador.this, sensor.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),  20000, handler);
+        sensor.registerListener(ServicioMuestreador.this, sensor.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 20000, handler);
+        setSharedPreferenceData(DETECTOR_CAIDAS_SERVICIO_INICIADO,"true");
         return START_STICKY;
     }
 
@@ -69,6 +73,7 @@ public class ServicioMuestreador extends Service implements SensorEventListener 
         handlerThread.quit();
         sensor.unregisterListener(this);
         wakeLock.release();
+        setSharedPreferenceData(DETECTOR_CAIDAS_SERVICIO_INICIADO,"false");
     }
 
 
@@ -85,5 +90,13 @@ public class ServicioMuestreador extends Service implements SensorEventListener 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {   }
 
+
+    /* ******************* GETTER AND SETTER *************************** */
+
+    private void setSharedPreferenceData(String map, String valor) {
+        SharedPreferences.Editor editor = getSharedPreferences(APP_SHARED_PREFERENCES_FILE, Context.MODE_MULTI_PROCESS).edit();
+        editor.putString(map, valor);
+        editor.commit();
+    }
 
 }

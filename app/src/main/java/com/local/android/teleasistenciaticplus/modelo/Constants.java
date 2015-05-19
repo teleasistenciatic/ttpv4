@@ -56,8 +56,8 @@ public interface Constants {
     String DETECTOR_CAIDAS_ARRANCAR_AL_INICIO = "caidas";
     String DETECTOR_CAIDAS_ACTIVAR = "activo";
     String DETECTOR_CAIDAS_DESACTIVAR = "inactivo";
-
-    String ARCHIVO_RED = "pesosprueba";
+    String DETECTOR_CAIDAS_SERVICIO_INICIADO="servicioiniciado";
+    String DETECTOR_CAIDAS_ARCHIVO_RED = "pesosprueba";
 
     public static final String NOMBRE_APP_SHARED_PREFERENCES_DATETIME_ULTIMO_SMS_ENVIADO = "ultimosmsenviado";
 
