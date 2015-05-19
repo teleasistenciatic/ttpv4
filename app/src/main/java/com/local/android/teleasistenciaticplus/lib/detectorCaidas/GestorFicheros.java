@@ -16,7 +16,7 @@ import java.util.LinkedList;
  *
  * Created by SAMUAN on 12/05/2015.
  */
-public class GestorFicheros {
+class GestorFicheros {
     private LinkedList lista;
     private Resources resources;
 

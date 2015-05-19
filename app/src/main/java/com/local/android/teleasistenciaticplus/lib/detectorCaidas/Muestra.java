@@ -8,7 +8,7 @@ package com.local.android.teleasistenciaticplus.lib.detectorCaidas;
  *
  * Created by SAMUAN on 01/04/2015.
  */
-public class Muestra {
+class Muestra {
 
     private long tiempo;
     private double aceleracion;

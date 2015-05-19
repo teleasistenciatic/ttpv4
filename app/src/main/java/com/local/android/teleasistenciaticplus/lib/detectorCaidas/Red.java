@@ -11,10 +11,10 @@ import java.util.LinkedList;
  *
  * @author SAMUAN
  */
-public class Red {
+class Red {
 
-    LinkedList<Capa> lista=new LinkedList() ; //lista con las distintas capas de la red.
-    double[] vectorEn; //vector de entrada de datos que se quiere clasificar.
+    private LinkedList<Capa> lista=new LinkedList<>() ; //lista con las distintas capas de la red.
+    private double[] vectorEn; //vector de entrada de datos que se quiere clasificar.
 
     /**
      * Realiza el cálculo.

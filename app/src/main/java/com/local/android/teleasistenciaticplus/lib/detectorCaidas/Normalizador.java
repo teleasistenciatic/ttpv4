@@ -5,7 +5,7 @@ package com.local.android.teleasistenciaticplus.lib.detectorCaidas;
  *
  * @author SAMUAN
  */
-public class Normalizador {
+class Normalizador {
 
 
     private static double[] media= new double[0];

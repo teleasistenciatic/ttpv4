@@ -7,7 +7,7 @@ package com.local.android.teleasistenciaticplus.lib.detectorCaidas;
  *
  * Created by SAMUAN on 12/05/2015.
  */
-public class Capa {
+class Capa {
     private double[] vector_entrada; //entrada a la capa
     private double[] vector_parcial; //calculo de pesos y bias
     private double[] vector_salida; // salida de la capa

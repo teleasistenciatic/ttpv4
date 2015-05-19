@@ -12,5 +12,5 @@ public interface IFuncionActivacion {
      * @param val vector de valores z
      * @return vector de valores a
      */
-    public double[] activar(double[] val);    
+    double[] activar(double[] val);
 }

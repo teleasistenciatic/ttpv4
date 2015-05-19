@@ -20,7 +20,7 @@ import java.util.LinkedList;
  *
  * Created by SAMUAN on 13/04/2015.
  */
-public class Monitor implements Constants{
+class Monitor implements Constants{
 
     private float gravedad=9.8066f;
 
@@ -32,7 +32,7 @@ public class Monitor implements Constants{
     private long pt=0; //peak time
     private long contadorTiempo=0;
     private String estado="muestreo";
-    Muestra[] datos=null;
+    private Muestra[] datos=null;
 
     private static String TAG="RedNeuronal";
 
@@ -49,7 +49,7 @@ public class Monitor implements Constants{
      * @param resources referencia para capturar el archivo con los datos de la red neuronal y datos de normalización.
      */
     public Monitor(Resources resources) {
-        cola =new LinkedList<Muestra>();
+        cola = new LinkedList<>();
         AppLog.i(TAG, "monitor inicio");
         tiempoInicio=System.currentTimeMillis();
         tiempoPasado=System.currentTimeMillis();
@@ -87,16 +87,15 @@ public class Monitor implements Constants{
         double[] desvis = dameBias(listaDatos8);
 
         normalizador=new Normalizador();
-        normalizador.setMedia(medias);
-        normalizador.setDesviacion(desvis);
+        Normalizador.setMedia(medias);
+        Normalizador.setDesviacion(desvis);
 
     }
 
     /**
      * Gestiona los eventos del acelerometro. Si se cumplen las condiciones extrae caracteristicas
      *
-     *
-     * @param event
+     * @param event Evento del sensor acelerómetro.
      */
     public void gestionar(SensorEvent event) {
 
@@ -251,7 +250,7 @@ public class Monitor implements Constants{
      * Añade un objeto muestra a la cola.
      * Si la cola se llena elimina por la cabeza.
      *
-     * @param muestra
+     * @param muestra Una muestra de datos con aceleración y tiempo de captura.
      */
     private void cargarMuestra(Muestra muestra){
         cola.add(muestra);
@@ -260,10 +259,10 @@ public class Monitor implements Constants{
 
     /**
      * Calcula el módulo del vector aceleración dado por el acelerómetro
-     * @param x
-     * @param y
-     * @param z
-     * @return
+     * @param x valor de aceleración en eje x.
+     * @param y valor de aceleración en eje y.
+     * @param z valor de aceleración en eje z.
+     * @return Devuelve el valor del módulo de la aceleración.
      */
     private double calcularModulo(double x, double y, double z){
         return Math.sqrt(    Math.pow(x,2) + Math.pow(y,2)+ Math.pow(z,2)   );

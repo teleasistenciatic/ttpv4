@@ -12,7 +12,6 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.util.Log;
 
 import com.local.android.teleasistenciaticplus.lib.helper.AppLog;
 
@@ -51,10 +50,10 @@ public class ServicioMuestreador extends Service implements SensorEventListener 
      * Activa el servicio. Iniciar la captación de datos del sensor acelerómetro y arranca un
      * nuevo hilo donde se recibirán los eventos del sensor.
      *
-     * @param intent
-     * @param flags
-     * @param startId
-     * @return
+     * @param intent The Intent supplied to startService(Intent), as given.
+     * @param flags Additional data about this start request. Currently either 0, START_FLAG_REDELIVERY, or START_FLAG_RETRY.
+     * @param startId A unique integer representing this specific request to start. Use with stopSelfResult(int).
+     * @return The return value indicates what semantics the system should use for the service's current started state. It may be one of the constants associated with the START_CONTINUATION_MASK bits.
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

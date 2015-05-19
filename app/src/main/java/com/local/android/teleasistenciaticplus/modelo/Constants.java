@@ -53,11 +53,11 @@ public interface Constants {
 
     public static final String NOMBRE_APP_SHARED_PREFERENCES_NO_MOSTRAR_AVISO_TARIFICACION = "avisotarificacion";
 
-    public static final String DETECTOR_CAIDAS_ARRANCAR_AL_INICIO = "caidas";
-    public static final String DETECTOR_CAIDAS_ACTIVAR = "activo";
-    public static final String DETECTOR_CAIDAS_DESACTIVAR = "inactivo";
+    String DETECTOR_CAIDAS_ARRANCAR_AL_INICIO = "caidas";
+    String DETECTOR_CAIDAS_ACTIVAR = "activo";
+    String DETECTOR_CAIDAS_DESACTIVAR = "inactivo";
 
-    public static final String ARCHIVO_RED = "pesosprueba";
+    String ARCHIVO_RED = "pesosprueba";
 
     public static final String NOMBRE_APP_SHARED_PREFERENCES_DATETIME_ULTIMO_SMS_ENVIADO = "ultimosmsenviado";
 

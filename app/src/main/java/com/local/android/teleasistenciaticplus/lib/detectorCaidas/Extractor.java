@@ -5,7 +5,7 @@ import android.util.Log;
 /**
  *
  */
-public class Extractor {
+class Extractor {
 
     private Muestra[] valores;
 
@@ -112,7 +112,7 @@ public class Extractor {
 
     /**
      * Calcula el tiempo de fin de impacto. Última aceleracion mayor a 1.5 g dentro del intervalo [peaktime, peaktime + 1000]
-     * @return
+     *
      */
     private void calcularIE(){
         for(int j=marcadorPeakMas; j>=marcadorPeak; j--){
@@ -128,7 +128,7 @@ public class Extractor {
     /**
      * Calcula el tiempo de Inicio del impacto. Tiempo de primera aceleracion > 1.5 precedida de aceleración < 0.8 en
      * intervalo [ valor_IE-1200, Peaktime ]
-     * @return
+     *
      */
     private void calcularIS() {
         long tiempoIEmenos = valor_IE - 1200000000;
@@ -196,7 +196,7 @@ public class Extractor {
 
         int marcaMedia=marcadorIS;
         Log.i("EXTRACTOR","EXTRACTOR AAMV 2 "+(marcadorIE-marcadorIS)/2);
-        marcaMedia=marcadorIS+ (int) ((marcadorIE-marcadorIS)/2);
+        marcaMedia=marcadorIS+((marcadorIE-marcadorIS)/2);
         Log.i("EXTRACTOR","EXTRACTOR marcaMedia"+marcaMedia);
 
         //buscar marca de tiempo 500 milisegundos antes
@@ -336,7 +336,7 @@ public class Extractor {
 
         int marcaMedia=marcadorIS;
         System.out.println("EXTRACTOR ARI "+(marcadorIE-marcadorIS)/2);
-        marcaMedia=marcadorIS+ (int) ((marcadorIE-marcadorIS)/2);
+        marcaMedia=marcadorIS+  ((marcadorIE-marcadorIS)/2);
         System.out.println("EXTRACTOR marcaMedia"+marcaMedia);
 
         //buscar marca de tiempo 350  milisegundos antes

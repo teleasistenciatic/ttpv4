@@ -108,6 +108,7 @@
         <string name="caidas_texto">Configuración de la detección de caidas</string>
         <string name="caidas_texto_estado_activo">Servicio iniciado</string>
         <string name="caidas_texto_estado_inactivo">Servicio detenido</string>
+        <string name="caidas_texto_estado_del_servicio">Estado del servicio</string>
 
         <string name="title_activity_act_debug_caidas">actDebugCaidas</string>
         <string name="title_activity_act_user_options_caidas">Detección de caidas</string>
