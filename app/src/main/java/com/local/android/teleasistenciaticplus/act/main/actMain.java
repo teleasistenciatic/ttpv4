@@ -31,7 +31,7 @@ import com.local.android.teleasistenciaticplus.lib.sound.SintetizadorVoz;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
 import com.local.android.teleasistenciaticplus.modelo.DebugLevel;
 import com.local.android.teleasistenciaticplus.modelo.TipoAviso;
-import com.local.android.teleasistenciaticplus.act.bateria.MonitorBateria;
+import com.local.android.teleasistenciaticplus.lib.bateria.MonitorBateria;
 
 
 import java.text.SimpleDateFormat;

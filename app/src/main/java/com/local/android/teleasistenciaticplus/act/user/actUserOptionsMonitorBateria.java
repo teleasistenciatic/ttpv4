@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.local.android.teleasistenciaticplus.R;
-import com.local.android.teleasistenciaticplus.act.bateria.MonitorBateria;
+import com.local.android.teleasistenciaticplus.lib.bateria.MonitorBateria;
 import com.local.android.teleasistenciaticplus.act.main.actMain;
 
 public class actUserOptionsMonitorBateria extends Activity {
