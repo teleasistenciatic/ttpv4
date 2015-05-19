@@ -40,6 +40,7 @@ public class actDuchaCuentaAtras extends FragmentActivity implements AppDialog.A
     private boolean changeBgColor;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -61,28 +62,16 @@ public class actDuchaCuentaAtras extends FragmentActivity implements AppDialog.A
 
     }
 
-
+    /** Al salir de la aplicación se detiene la cuenta atrás */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_act_ducha_cuenta_atras, menu);
-        return true;
+    public void onStop() {
+
+        TheCountDown.cancel();
+        finish();
+        super.onStop();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     void startCountDown() {
 
@@ -98,7 +87,7 @@ public class actDuchaCuentaAtras extends FragmentActivity implements AppDialog.A
 
         final NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        //futureTime = 800000;
+        futureTime = 65000; //TODO BORRAR
         TheCountDown = new CountDownTimer(futureTime, interval) {
 
             Boolean alarmaDisparada = false;

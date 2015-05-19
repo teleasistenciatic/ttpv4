@@ -148,7 +148,7 @@
         <string name="modo_ducha_boton_45_minutos">45 minutos</string>
         <string name="modo_ducha_boton_detener">DETENER</string>
         <string name="action_settings">Settings</string>
-        <string name="title_activity_act_ducha_cuenta_atras">actDuchaCuentaAtras</string>
+        <string name="title_activity_act_ducha_cuenta_atras">Modo ducha: cuenta atrás</string>
     <!-- Fin Modo Ducha -->
 
     <!-- Aviso de coste de SMS -->

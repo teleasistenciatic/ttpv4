@@ -275,8 +275,32 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
      */
     public void backtohome_action_button(View view) {
 
-        Toast.makeText(getBaseContext(), "Volver a Casa", Toast.LENGTH_LONG).show();
-        //TODO implementar este método y la clase (actBackToHome)
+        //Toast.makeText(getBaseContext(), "Volver a Casa", Toast.LENGTH_LONG).show();
+
+        // ¿Hay datos de Zona Segura/ Hogar?
+        AppSharedPreferences misAppSharedPreferences = new AppSharedPreferences();
+
+        if ( misAppSharedPreferences.hasZonaSegura() ) {
+
+            String[] hogar = misAppSharedPreferences.getZonaSeguraData();
+
+            String location= hogar[0] + ", " + hogar[1] ; //"36.993150, -2.657814";
+
+            Intent mapIntent=new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=" + location + "&mode=w"));
+            mapIntent.setPackage("com.google.android.apps.maps");
+            startActivity(mapIntent);
+
+        } else {
+
+            Toast.makeText(getBaseContext(), "No hay datos de zona segura", Toast.LENGTH_LONG).show();
+
+        }
+
+
+
+
+        //
+
         /*
         Intent intent = new Intent(this, actBackToHome.class);
 
