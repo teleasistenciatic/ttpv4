@@ -116,15 +116,15 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
         // Se inicia el servicio de detección de caidas
         /////////////////////////////////////////////
         AppSharedPreferences mispreferences = new AppSharedPreferences();
-        String caidasActivas = mispreferences.getPreferenceData(Constants.CAIDAS);
-        if(caidasActivas.equals(Constants.ACTIVO)){   //si esta indicado arranco
+        String caidasActivas = mispreferences.getPreferenceData(Constants.DETECTOR_CAIDAS_ARRANCAR_AL_INICIO);
+        if(caidasActivas.equals(Constants.DETECTOR_CAIDAS_ACTIVAR)){   //si esta indicado arranco
             Intent intentA= new Intent(this,ServicioMuestreador.class);
             startService(intentA);
             AppLog.i(TAG,"Caidas activo");
-        }else if( caidasActivas.equals(Constants.INACTIVO)){  //no hago nada.
+        }else if( caidasActivas.equals(Constants.DETECTOR_CAIDAS_DESACTIVAR)){  //no hago nada.
             AppLog.i(TAG,"Caidas inactivo");
         }else{ //no existe la preferencia. crear e iniciar el servicio.
-            mispreferences.setPreferenceData(Constants.CAIDAS,Constants.ACTIVO);
+            mispreferences.setPreferenceData(Constants.DETECTOR_CAIDAS_ARRANCAR_AL_INICIO,Constants.DETECTOR_CAIDAS_ACTIVAR);
             Intent intentA= new Intent(this,ServicioMuestreador.class);
             startService(intentA);
             AppLog.i(TAG,"caidas creado y activo");

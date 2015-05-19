@@ -2,23 +2,21 @@ package com.local.android.teleasistenciaticplus.lib.detectorCaidas;
 
 import android.content.res.Resources;
 import android.hardware.SensorEvent;
-import android.util.Log;
 
 import com.local.android.teleasistenciaticplus.R;
+import com.local.android.teleasistenciaticplus.lib.helper.AppLog;
 import com.local.android.teleasistenciaticplus.lib.sound.PlaySound;
 import com.local.android.teleasistenciaticplus.lib.sms.SmsLauncher;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
 import com.local.android.teleasistenciaticplus.modelo.DebugLevel;
-import com.local.android.teleasistenciaticplus.modelo.GlobalData;
 import com.local.android.teleasistenciaticplus.modelo.TipoAviso;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.LinkedList;
 
 /**
- * Comprueba los datos del acelerometro.
+ * Monitoriza los datos del acelerómetro. Cuando se cumplen ciertas condiciones se pasan los datos
+ * al extractor de caracteristicas, para después, realizar el procesamiento de la red neuronal y
+ * clasificar esos datos.
  *
  * Created by SAMUAN on 13/04/2015.
  */
@@ -26,10 +24,10 @@ public class Monitor implements Constants{
 
     private float gravedad=9.8066f;
 
-    private LinkedList<Muestra> cola;
-    private int tamaLista=500;
+    private LinkedList<Muestra> cola; //lista de muestras del acelerómetro
+    private int tamaLista=500; //tamaño maximo de la lista.
 
-    private double umbralGravedad=2.1;
+    private double umbralGravedad=2.4; //límite a partir del cual se tienen en cuentan las medidas.
 
     private long pt=0; //peak time
     private long contadorTiempo=0;
@@ -45,111 +43,57 @@ public class Monitor implements Constants{
     private Red red;
     private Normalizador normalizador;
 
+    /**
+     * Prepara el monitor para la captura de datos.
+     * Inicia la red neuronal y el normalizador.
+     * @param resources referencia para capturar el archivo con los datos de la red neuronal y datos de normalización.
+     */
     public Monitor(Resources resources) {
-    //    FileOperation.fileLogInitialize();
-     //   FileOperation.fileLogWrite(TAG,"Inicio app: ");
-    //    FileOperation.fileLogWrite(TAG,"Umbral gravedad: "+umbralGravedad);
-
         cola =new LinkedList<Muestra>();
-Log.i("MONITOR","monitor inicio");
+        AppLog.i(TAG, "monitor inicio");
         tiempoInicio=System.currentTimeMillis();
         tiempoPasado=System.currentTimeMillis();
 
-        //capturar archivo de pesos
-        String linea;
-        LinkedList listaDatos1=new LinkedList();
-        LinkedList listaDatos2=new LinkedList();
-        String marcador="dato0";
-        double[] valoresD;
-        double[] medias = new double[0];
-        double[] desvis = new double[0];
-        try{
-            int idenArchivoRed=resources.getIdentifier(ARCHIVO_RED,"raw", GlobalData.getAppContext().getPackageName());
-            Log.e("MONITOR","monitor idenArchivoRed "+idenArchivoRed);
-            InputStream flujo= resources.openRawResource(idenArchivoRed);
-            BufferedReader lector= new BufferedReader(new InputStreamReader(flujo));
-            while( (linea=lector.readLine())!=null ){
-                System.out.println(linea+" "+linea.length());
-                if(linea.length()>0 && !linea.startsWith("#")){
-                    if(linea.contains("DATA1")){
-                        marcador = "data1";
-                    }else if(linea.contains("DATA2")) {
-                        marcador = "data2";
-                    }else if(linea.contains("DATA3")) {
-                        marcador = "data3";
-                    }else if(linea.contains("DATA4")){
-                        marcador = "data4";
-                    }else{
-                        String[] valores = linea.split(",");
-                        if(valores.length>1){
-                              System.out.println("monitor Tamaño vlaores "+valores.length);
-                            valoresD=new double[valores.length];
-                            for(int i=0;i<valores.length;i++){
-                              // System.out.println(""+i);
-                                valoresD[i]=Double.parseDouble(valores[i]);
-                            }
-                            if(marcador.equals("data1")){
-                                listaDatos1.add(valoresD);
-                            }else if(marcador.equals("data2")){
-                                listaDatos2.add(valoresD);
-                            }else if(marcador.equals("data3")){
-                                System.out.println("monitor normali datos 3");
-                                medias=valoresD;
-                            }else if(marcador.equals("data4")){
-                                System.out.println("monitor normali datos 4");
-                                desvis=valoresD;
-                            }
-                        }
-                    }
-                }
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+        //************ Captura datos de fichero.
 
-        //generar las matrices de sinapsis para enviar a red.
-        double[][] sinapsisA; //relaciona la entrada con la capa oculta
-        int longi=((double[])listaDatos1.get(0)).length; //System.out.println("longi "+longi);
-        sinapsisA=new double[listaDatos1.size()][longi];
-        for(int j=0;j<listaDatos1.size();j++){
-            sinapsisA[j]=(double[])listaDatos1.get(j);
-        }
+        GestorFicheros gestorFicheros=new GestorFicheros(resources);
+        gestorFicheros.leerArchivoPesos(ARCHIVO_RED);
+        LinkedList listaDatos1=gestorFicheros.dameLista(0);
+        LinkedList listaDatos2=gestorFicheros.dameLista(1);
+        LinkedList listaDatos3=gestorFicheros.dameLista(2);
+        LinkedList listaDatos4=gestorFicheros.dameLista(3);
+        LinkedList listaDatos5=gestorFicheros.dameLista(4);
+        LinkedList listaDatos6=gestorFicheros.dameLista(5);
+        LinkedList listaDatos7=gestorFicheros.dameLista(6);
+        LinkedList listaDatos8=gestorFicheros.dameLista(7);
 
-        double[][] sinapsisB; //relaciona la capa oculta con la capa de salida
-        int longib=((double[])listaDatos2.get(0)).length;
-        sinapsisB=new double[listaDatos2.size()][longib];
-        for(int j=0;j<listaDatos2.size();j++){
-            sinapsisB[j]=(double[])listaDatos2.get(j);
-        }
+        //******************  inicio red
+
+        double[][] sinapsisA = dameSinapsis(listaDatos1);
+        double[][] sinapsisB = dameSinapsis(listaDatos2);
+        double[][] sinapsisC = dameSinapsis(listaDatos3);
+        double[] biasA = dameBias(listaDatos4);
+        double[] biasB = dameBias(listaDatos5);
+        double[] biasC = dameBias(listaDatos6);
 
         red=new Red();
-        System.out.println("iniciar red: "+sinapsisA[0].length+" "+sinapsisA.length+" "+sinapsisB.length);
-        red.iniciarRed(sinapsisA[0].length,sinapsisA.length,sinapsisB.length);
-        red.setSinapsisA(sinapsisA);
-        red.setSinapsisB(sinapsisB);
+        red.agregarCapa(sinapsisA , biasA, new FuncionSigmoidal() );
+        red.agregarCapa(sinapsisB , biasB, new FuncionSigmoidal() );
+        red.agregarCapa(sinapsisC , biasC, new FuncionSigmoidal() );
 
+        //*************** inicio normalizador
 
-        red.imprimirSinapsis();
-
-        double[] biasA=new double[sinapsisA.length];
-        for(int j=0;j<sinapsisA.length;j++){
-            biasA[j]=1;
-        }
-        red.setBiasA(biasA);
-
-        double[] biasB=new double[sinapsisB.length];
-        for(int j=0;j<sinapsisB.length;j++){
-            biasB[j]=1;
-        }
-        red.setBiasB(biasB);
+        double[] medias = dameBias(listaDatos7);
+        double[] desvis = dameBias(listaDatos8);
 
         normalizador=new Normalizador();
         normalizador.setMedia(medias);
         normalizador.setDesviacion(desvis);
+
     }
 
     /**
-     * Gestiona los eventos del acelerometro. Si se cumplen las caracteristicas extrae caracteristicas
+     * Gestiona los eventos del acelerometro. Si se cumplen las condiciones extrae caracteristicas
      *
      *
      * @param event
@@ -157,11 +101,10 @@ Log.i("MONITOR","monitor inicio");
     public void gestionar(SensorEvent event) {
 
         //apuntador de tiempo de prueba...
-        tiempoActual=System.currentTimeMillis();
+      /*  tiempoActual=System.currentTimeMillis();
         if( ( tiempoActual - tiempoPasado) > 5000 ){
             tiempoPasado=tiempoActual;
-           // FileOperation.fileLogWrite(TAG,"segundos "+ (tiempoPasado-tiempoInicio)/1000);
-        }
+        }*/
 
         float values[] = event.values;
         float x = values[0];
@@ -175,7 +118,6 @@ Log.i("MONITOR","monitor inicio");
         double modulo=calcularModulo(xg,yg,zg);
 
         cargarMuestra(new Muestra(tiempo,modulo));
-      //  Log.i("MONITOR","gestionar "+modulo);
         if(estado.equals("muestreo")){ //se ha detectado un pico de gravedad
             if(modulo>umbralGravedad){
                 iniciarPostpeak(modulo,tiempo);
@@ -189,9 +131,8 @@ Log.i("MONITOR","monitor inicio");
                 //generar array de valores.
                 datos=new Muestra[cola.size()];
                 cola.toArray(datos); //extraigo datos a analizar.
-                //FileOperation.fileLogWrite(TAG, "Test de actividad ");
                 iniciarActivityTest();
-                Log.i("Acelerometro","iniciar activity test "+tiempo);
+                AppLog.i("Acelerometro","iniciar activity test "+tiempo);
             }
         }
 
@@ -201,12 +142,12 @@ Log.i("MONITOR","monitor inicio");
      * Realizo el test de actividad. Si la actividad es baja se extraen caracteristicas y
      * se pasa a red neuronal.
      *
-     * La respuesta de la red neuronal se para a archivo.
+     * La respuesta de la red neuronal generará sms en caso de caida.
      */
     private void iniciarActivityTest(){
         //capturar datos de lista
         estado="activitytest";
-        Log.i("Acelerometro","iniciar activity test");
+        AppLog.i("Acelerometro","iniciar activity test");
 
         //calcular AAMV , media de las diferencias.
         long tiempoInicioCalculo=pt+1000000000; //se toma desde 1 sg a 2.5 sg despues del impacto
@@ -233,20 +174,16 @@ Log.i("MONITOR","monitor inicio");
             double dif=Math.abs( datos[j].getAceleracion() - datos[j+1].getAceleracion() );
             difTotal=difTotal+dif;
         }
-        //difTotal=difTotal/(datos.length-marcador); //divide entre mas datos --> valor mas pequeño
         difTotal=difTotal/(marcadorFin-marcador);
-        Log.i(TAG,"Filtro AAMV: "+difTotal);
-
-      //  FileOperation.fileLogWrite(TAG,"Filtro AAMV Test Actividad: "+difTotal);
+        AppLog.i(TAG,"Filtro AAMV: "+difTotal);
 
         //si valor supera 0.05g entonces se descarta como caida
         //si es menor o igual se considera caida y se envian datos a clasificador
         if(difTotal>0.05){
 
         }else {
-            //FileOperation.fileLogWrite(TAG,"Envío a Red Neuronal");
 
-            Log.i(TAG,"tiempo de pico "+pt);
+            AppLog.i(TAG,"tiempo de pico "+pt);
             Extractor extractor = new Extractor(pt, datos);
             double[] resul=extractor.getCaracteristicas();
 
@@ -254,9 +191,9 @@ Log.i("MONITOR","monitor inicio");
                 //monitor devuelve los 8 valores
                 //ahora hay que normalizar.
                 resul=normalizador.normaliza(resul);
-                red.setVector_entrada(resul);
+                red.setVectorEn(resul);
                 red.calcular();
-                double[] laSalida=red.getVector_salida();
+                double[] laSalida=red.getVectorEn();
 
                 //de que tipo es?
                 double mayor=0;
@@ -271,15 +208,19 @@ Log.i("MONITOR","monitor inicio");
 
                 switch (marca){
                     case 1:
+                        AppLog.i(TAG,"Monitor | Sentado");
                         if(Constants.DEBUG_LEVEL == DebugLevel.DEBUG) PlaySound.play(R.raw.sentado);
                         break;
                     case 2:
+                        AppLog.i(TAG,"Monitor | Correr");
                         if(Constants.DEBUG_LEVEL == DebugLevel.DEBUG) PlaySound.play(R.raw.correr);
                         break;
                     case 3:
+                        AppLog.i(TAG,"Monitor | Golpe");
                         if(Constants.DEBUG_LEVEL == DebugLevel.DEBUG) PlaySound.play(R.raw.golpe);
                         break;
                     case 4:
+                        AppLog.i(TAG,"Monitor | Caida");
                         if(Constants.DEBUG_LEVEL == DebugLevel.DEBUG) PlaySound.play(R.raw.caida);
 
                         //código para el envio de sms.
@@ -296,16 +237,14 @@ Log.i("MONITOR","monitor inicio");
     /**
      * Cambia el estado a "postpeak".
      *
-     * @param modulo
-     * @param tiempo
+     * @param modulo valor de la aceleración
+     * @param tiempo tiempo de la muestra
      */
     private void iniciarPostpeak(double modulo,long tiempo){
         contadorTiempo=0;
         pt=tiempo;
         estado="postpeak";
-        // System.out.println("iniciar post peak "+tiempo);
-        //FileOperation.fileLogWrite(TAG,"Post peak | Modulo: "+modulo+" Tiempo: "+tiempo);
-        Log.i(TAG,"Post peak | Modulo: "+modulo+" Tiempo: "+tiempo);
+        AppLog.i(TAG,"Post peak | Modulo: "+modulo+" Tiempo: "+tiempo);
     }
 
     /**
@@ -328,6 +267,32 @@ Log.i("MONITOR","monitor inicio");
      */
     private double calcularModulo(double x, double y, double z){
         return Math.sqrt(    Math.pow(x,2) + Math.pow(y,2)+ Math.pow(z,2)   );
+    }
+
+    /**
+     * Convierte una lista con los datos en una matriz de sinapsis
+     * @param lista la lista que contiene los datos double
+     * @return vector
+     */
+    private static double[][] dameSinapsis(LinkedList lista){
+        double[][] sinapsis;
+        int longi=((double[])lista.get(0)).length;
+        sinapsis=new double[lista.size()][longi];
+        for(int i=0;i<lista.size();i++){
+            sinapsis[i]=(double[])lista.get(i);
+        }
+        return sinapsis;
+    }
+
+    /**
+     * Convierte una lista de datos en un vector con los datos de bias.
+     * @param lista la lista que contiene los datos double
+     * @return vector
+     */
+    private static double[] dameBias(LinkedList lista){
+        double[] bias;
+        bias=(double[])lista.get(0);
+        return bias;
     }
 
 }

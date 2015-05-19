@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.local.android.teleasistenciaticplus.R;
 import com.local.android.teleasistenciaticplus.lib.detectorCaidas.ServicioMuestreador;
+import com.local.android.teleasistenciaticplus.lib.helper.AppLog;
 
 public class actDebugCaidas extends Activity {
 
@@ -23,8 +24,6 @@ public class actDebugCaidas extends Activity {
         setContentView(R.layout.activity_act_debug_caidas);
 
         //arrancar servicio que comprueba las caidas
-     //   Intent intent = new Intent(this, ServicioMuestreador.class);
-     //   startService(intent);
         intent=new Intent(this, ServicioMuestreador.class);
         texto=(TextView) findViewById(R.id.textoEstadoServicio);
     }
@@ -55,14 +54,12 @@ public class actDebugCaidas extends Activity {
     public void onClick(View v){
         switch(v.getId()){
             case R.id.button1:
-                Log.i("CAIDAS", "caidas boton 1");
                 startService(intent);
                 texto.setText("Servicio Iniciado");
                 break;
             case R.id.button2:
-                Log.i("CAIDAS", "caidas boton 2");
                 boolean que=stopService(intent);
-                Log.i("CAIDAS","caidas servicio parado? "+que);
+                AppLog.i("CAIDAS","caidas servicio parado? "+que);
                 texto.setText("Servicio Parado");
                 break;
 

@@ -28,8 +28,8 @@ public class actUserOptionsCaidas extends Activity {
         CheckBox micheckbox=(CheckBox) findViewById(R.id.caidas_checkbox);
         texto = (TextView) findViewById(R.id.caidas_texto_estado);
 
-        String valor=userSharedPreferences.getPreferenceData(Constants.CAIDAS);
-        if( valor.equals(Constants.ACTIVO)){
+        String valor=userSharedPreferences.getPreferenceData(Constants.DETECTOR_CAIDAS_ARRANCAR_AL_INICIO);
+        if( valor.equals(Constants.DETECTOR_CAIDAS_ACTIVAR)){
             micheckbox.setChecked(true);
             texto.setText(R.string.caidas_texto_estado_activo);
         }else{
@@ -67,9 +67,9 @@ public class actUserOptionsCaidas extends Activity {
                 AppSharedPreferences userSharedPreferences = new AppSharedPreferences();
                 boolean checked = ((CheckBox) v).isChecked();
                 if(checked){
-                    userSharedPreferences.setPreferenceData(Constants.CAIDAS,Constants.ACTIVO);
+                    userSharedPreferences.setPreferenceData(Constants.DETECTOR_CAIDAS_ARRANCAR_AL_INICIO,Constants.DETECTOR_CAIDAS_ACTIVAR);
                 }else{
-                    userSharedPreferences.setPreferenceData(Constants.CAIDAS,Constants.INACTIVO);
+                    userSharedPreferences.setPreferenceData(Constants.DETECTOR_CAIDAS_ARRANCAR_AL_INICIO,Constants.DETECTOR_CAIDAS_DESACTIVAR);
                 }
                 break;
             case R.id.caidas_boton_arrancar:
