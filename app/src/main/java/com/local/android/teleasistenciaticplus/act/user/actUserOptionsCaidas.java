@@ -36,7 +36,7 @@ public class actUserOptionsCaidas extends Activity {
             micheckbox.setChecked(false);
         }
 
-        //comprueba si el servicio est· iniciado o no.
+        //comprueba si el servicio est√° iniciado o no.
         String valor_servicio=userSharedPreferences.getPreferenceData(Constants.DETECTOR_CAIDAS_SERVICIO_INICIADO);
         if(valor_servicio.equals("true")){
             texto.setText(R.string.caidas_texto_estado_activo);

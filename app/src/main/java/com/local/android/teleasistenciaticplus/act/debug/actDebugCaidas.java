@@ -3,9 +3,6 @@ package com.local.android.teleasistenciaticplus.act.debug;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -29,7 +26,7 @@ public class actDebugCaidas extends Activity {
         intent=new Intent(this, ServicioMuestreador.class);
         texto=(TextView) findViewById(R.id.textoEstadoServicio);
 
-        //comprueba si el servicio est· iniciado o no.
+        //comprueba si el servicio est√° iniciado o no.
         AppSharedPreferences userSharedPreferences = new AppSharedPreferences();
         String valor_servicio=userSharedPreferences.getPreferenceData(Constants.DETECTOR_CAIDAS_SERVICIO_INICIADO);
         if(valor_servicio.equals("true")){

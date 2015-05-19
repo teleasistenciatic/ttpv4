@@ -12,7 +12,7 @@ import java.util.LinkedList;
 
 /**
  * Clase encargada de leer el archivo de datos con los pesos de la red neuronal,
- * los datos de bias de la red neuronal y la media y desviación de las muestras.
+ * los datos de bias de la red neuronal y la media y desviaciÃ³n de las muestras.
  *
  * Created by SAMUAN on 12/05/2015.
  */
@@ -26,7 +26,7 @@ class GestorFicheros {
     }
 
     /**
-     * Este método lee el archivo que se le indique y captura los datos contenidos en él.
+     * Este mÃ©todo lee el archivo que se le indique y captura los datos contenidos en Ã©l.
      * Los datos los almacena en una lista de listas. Las sublistas almacenan vectores de double.
      *
      * @param archivoPesos El archivo que se va a leer.
@@ -67,7 +67,7 @@ class GestorFicheros {
     }
 
     /**
-     * El método devuelve la sublista que se le indique.
+     * El mÃ©todo devuelve la sublista que se le indique.
      *
      * @param i indice de la sublista.
      * @return la sublista indicada.

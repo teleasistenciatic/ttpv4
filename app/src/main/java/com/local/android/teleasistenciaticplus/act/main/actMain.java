@@ -3,6 +3,7 @@ package com.local.android.teleasistenciaticplus.act.main;
 
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,21 +22,22 @@ import com.local.android.teleasistenciaticplus.act.user.actUserOptions;
 import com.local.android.teleasistenciaticplus.act.user.actUserOptionsDatosPersonales;
 import com.local.android.teleasistenciaticplus.act.user.actUserOptionsPersonaContacto;
 import com.local.android.teleasistenciaticplus.act.zonasegura.serviceZonaSegura;
+import com.local.android.teleasistenciaticplus.lib.bateria.MonitorBateria;
 import com.local.android.teleasistenciaticplus.lib.detectorCaidas.ServicioMuestreador;
 import com.local.android.teleasistenciaticplus.lib.helper.AppDialog;
 import com.local.android.teleasistenciaticplus.lib.helper.AppLog;
 import com.local.android.teleasistenciaticplus.lib.helper.AppSharedPreferences;
-import com.local.android.teleasistenciaticplus.lib.sound.PlaySound;
 import com.local.android.teleasistenciaticplus.lib.sms.SmsLauncher;
+import com.local.android.teleasistenciaticplus.lib.sound.PlaySound;
 import com.local.android.teleasistenciaticplus.lib.sound.SintetizadorVoz;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
 import com.local.android.teleasistenciaticplus.modelo.DebugLevel;
 import com.local.android.teleasistenciaticplus.modelo.TipoAviso;
-import com.local.android.teleasistenciaticplus.lib.bateria.MonitorBateria;
-
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Actividad principal
@@ -50,6 +52,13 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
 
     private ImageButton SMSAlertButton;
     private ImageButton SMSOKButton;
+
+    private static AnimationDrawable tresdosunoGo; //Animación para cuenta atrás
+
+    //Controles de estado del botón rojo
+    public int boton_rojo_clicks; //Número de clicks sobre el botón
+    public boolean boton_rojo_cuenta_atras_activa;
+    public boolean boton_rojo_cancelar_envio;
 
     static actMain instanciaActMain;
 
@@ -67,6 +76,15 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
 
         SMSAlertButton = (ImageButton) findViewById(R.id.tfmButton);
         SMSOKButton = (ImageButton) findViewById(R.id.btnIamOK);
+
+        //Asigamos al botón rojo la animación de cuenta atrás
+        SMSAlertButton.setBackgroundResource(R.drawable.boton_rojo_states);
+        tresdosunoGo = (AnimationDrawable) SMSAlertButton.getBackground();
+
+        //Inicializamos el estado del botón rojo
+        boton_rojo_clicks = 0;
+        boton_rojo_cuenta_atras_activa = false;
+        boton_rojo_cancelar_envio = false;
 
         //Damos la bienvenida
         if ( (Constants.PLAY_SOUNDS) && (Constants.PLAY_BIENVENIDO_SOUND) ) {
@@ -342,68 +360,148 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
 
 
     /**
-     * Envio de los SMS a los familiares
+     * Método inicial para comprobar si es posible el envio de los SMS a los familiares.
+     * Comprueba que haya contactos almacenados.
+     * Controla los clicks que recibe el botón, permitiendo temporalmente cancelar la acción del
+     * envío del SMS.
+     * Este método no realiza de forma directa el envío del SMS, en su lugar, llama al método
+     * enviarSMSdiferido, que comprobará si es posible el envío del SMS (dependiendo de si se ha
+     * cancelado la acción a través de un segundo click durante la cuenta atrás).
      *
      * @param view Vista del botón
      */
     public void sendAvisoSms(View view) {
 
+        //0. Comprobamos si se ha pulsado más de una vez el botón
         //1. Leemos la lista de personas de contacto
         //2. Comprobamos el tiempo transcurrido desde el último SMS enviado
         //2. Se les envía SMS
         //3. Se muestra un mensaje de indicación
 
-        Boolean hayPersonasContactoConTelefono = new AppSharedPreferences().hasPersonasContacto();
+        boton_rojo_clicks++;
 
-        if (!hayPersonasContactoConTelefono) {
+
+        AppLog.i(TAG,"-----------------");
+        AppLog.i(TAG,"ENTRADA al Método principal");
+        AppLog.i(TAG, "Click: " + boton_rojo_clicks);
+
+
+
+        if(boton_rojo_clicks==1){
+            AppLog.i(TAG,"Primer CLICK");
+            AppLog.i(TAG,"Click: " + boton_rojo_clicks);
+            //No hay clicks previos en proceso,
+            // el estado del botón es óptimo para iniciar la cuenta atrás
+            // y proceder con el intento de envío del SMS
+
+
+            Boolean hayPersonasContactoConTelefono = new AppSharedPreferences().hasPersonasContacto();
+
+            if (!hayPersonasContactoConTelefono) {
             /*
             /////////
             //Genera una alerta en caso de que no tengamos asignados los contactos
             /////////
             //Se abre el menú de personas de contacto
             */
-            AppDialog newFragment = AppDialog.newInstance(AppDialog.tipoDialogo.SIMPLE,1,
-                    "Contactos no disponibles",
-                    "No se han encontrado contactos almacenados. Introduzca al menos un contacto",
-                    getResources().getString(R.string.aceptar),
-                    "sin_uso");
-            newFragment.show(getFragmentManager(),"dialog");
-            //Fin del mensaje de información
-
-        }
-
-        Boolean hayListaContactos = new SmsLauncher(TipoAviso.AVISO).generateAndSend();
-
-
-        //TODO: mejorar con el control de errores de SMS
-
-        //Si se ha mandado algún SMS...
-
-        if ( hayListaContactos ) {
-
-            actualizarUltimoSMSEnviado(null);
-
-            //Avisamos al usuario de que ha enviado el SMS con un sonido
-            if (Constants.PLAY_SOUNDS) {
-
-                PlaySound.play(R.raw.mensaje_enviado);
+                AppDialog newFragment = AppDialog.newInstance(AppDialog.tipoDialogo.SIMPLE,1,
+                        "Contactos no disponibles",
+                        "No se han encontrado contactos almacenados. Introduzca al menos un contacto",
+                        getResources().getString(R.string.aceptar),
+                        "sin_uso");
+                newFragment.show(getFragmentManager(),"dialog");
+                //Fin del mensaje de información
 
             }
 
-            //Deshabilitamos el botón y cambiamos su aspecto
-            view.setEnabled(false);
+            //Mostramos texto para posibilitar la cancelación del envío
+            TextView tvUltimoSMSEnviado = (TextView) findViewById(R.id.tvUltimoSMSEnviado);
+            tvUltimoSMSEnviado.setText("PULSE DE NUEVO PARA CANCELAR");
 
-            view.setBackgroundResource(R.drawable.grey_button200);
+            //Iniciamos la cuenta atrás
+            boton_rojo_cuenta_atras_activa = true;
+            tresdosunoGo.start();
 
-            //Habilitamos el botón transcurridos unos segundos
-            new Handler().postDelayed(new Runnable() {
+            //finalizada la cuenta atrás, intentamos enviar el SMS.
+            //1. Recuperamos el tiempo total de la animación
+            //2. Lanzamos el intento de envío del SMS con un Timer
+            long totalDuration = 0;
+            for(int i = 0; i< tresdosunoGo.getNumberOfFrames();i++){
+                totalDuration += tresdosunoGo.getDuration(i);
+            }
+
+            Timer timer = new Timer();
+            TimerTask timerTask = new TimerTask(){
+
                 @Override
                 public void run() {
-                    SMSAlertButton.setEnabled(true);
-                    SMSAlertButton.setBackgroundResource(R.drawable.red_button200);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            //Ejecutar el envío del SMS en una función aparte
+                            AppLog.i(TAG,"-----------------");
+                            AppLog.i(TAG,"Fin de la cuenta atrás");
+                            AppLog.i(TAG,"Click: " + boton_rojo_clicks);
+                            AppLog.i(TAG,"Cuenta atrás: " + boton_rojo_cuenta_atras_activa);
+                            AppLog.i(TAG,"Cancelar envío: " + boton_rojo_cancelar_envio);
+
+                            boton_rojo_cuenta_atras_activa = false;
+                            SMSAlertButton.setEnabled(false);
+
+                            //Mostramos el texto en la pantalla
+                            TextView tvUltimoSMSEnviado = (TextView) findViewById(R.id.tvUltimoSMSEnviado);
+                            tvUltimoSMSEnviado.setText("Enviando SMS. Por favor espere...");
+
+                            enviarSMSdiferido(SMSAlertButton);
+
+                        }
+                    });
                 }
-            }, Constants.SMS_SENDING_DELAY);
+            };
+
+            timer.schedule(timerTask, totalDuration);
         }
+
+        else {
+            //Antes ya se había pulsado el botón.
+
+            AppLog.i(TAG,"CLICK adicional");
+            AppLog.i(TAG,"Click: " + boton_rojo_clicks);
+            AppLog.i(TAG, "Cuenta atrás: " + boton_rojo_cuenta_atras_activa);
+            AppLog.i(TAG, "Cancelar envío: " + boton_rojo_cancelar_envio);
+
+            //Si es el segundo click comprobamos si la acuenta atrás está activa para deternela y cancelar el envío del SMS
+            if (boton_rojo_clicks == 2) {
+                AppLog.i(TAG,"Segundo Click");
+                AppLog.i(TAG,"Click: " + boton_rojo_clicks);
+
+
+                if(boton_rojo_cuenta_atras_activa) {
+                    AppLog.i(TAG,"Animación activa!! Hay que detenerla y cancelar el envío");
+                    //Mostramos el texto de envío cancelado
+                    TextView tvUltimoSMSEnviado = (TextView) findViewById(R.id.tvUltimoSMSEnviado);
+                    tvUltimoSMSEnviado.setText("Envío de SMS Cancelado");
+
+                    //Acualizamos la UI
+                    //SMSAlertButton.setEnabled(true);
+
+                    tresdosunoGo.stop();
+                    tresdosunoGo.selectDrawable(0);
+                    //Nos aseguramos de que no se mande el SMS
+                    boton_rojo_cancelar_envio = true;
+                    boton_rojo_clicks--;
+                }
+            }
+            else {
+
+                //se han hecho más de dos clicks, así que lo ignoramos
+                AppLog.i(TAG,"CLICK sin efecto");
+                boton_rojo_clicks--;
+
+            }
+        }
+
     }
 
     /**
@@ -470,7 +568,11 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
 
     }
 
-
+    /**
+     * Refresca el texto en pantalla de la fecha del último envío de SMS
+     *
+     * @param date Fecha de envío del SMS
+     */
     public void actualizarUltimoSMSEnviado (Date date) {
 
         //Actualizamos el tiempo del envío del mensaje
@@ -499,6 +601,106 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
         if (Constants.SHOW_ANIMATION) {
 
             overridePendingTransition(R.anim.animation2, R.anim.animation1);
+
+        }
+
+    }
+
+    /**
+     * Realiza el envío de los SMS a todos los contactos siempre que no se haya cancelado con
+     * anterioridad la acción como consecuencia de un segundo click sobre el botón rojo durante
+     * la cuenta atrás.
+     *
+     * @param v Vista del botón
+     */
+    public void enviarSMSdiferido(View v) {
+
+        SMSAlertButton.setEnabled(false);
+        SMSAlertButton.setBackgroundResource(R.drawable.grey_button200);
+        AppLog.i(TAG,"-----------------");
+        AppLog.i(TAG,"ENTRADA al Método de envío de SMS");
+        AppLog.i(TAG,"Click: " + boton_rojo_clicks);
+        AppLog.i(TAG,"Cuenta atrás: " + boton_rojo_cuenta_atras_activa);
+        AppLog.i(TAG,"Cancelar envío: " + boton_rojo_cancelar_envio);
+
+
+        boton_rojo_clicks--;
+
+        //Si no se ha cancelado el envío con un segundo click mientras estaba la cuenta atrás, se envía
+        if(boton_rojo_cancelar_envio == false) {
+            AppLog.i(TAG, "Envío no cancelado. MANDAMOS SMS");
+
+            //Enviamos el SMS
+            Boolean hayListaContactos = new SmsLauncher(TipoAviso.AVISO).generateAndSend();
+
+
+
+            //TODO: mejorar con el control de errores de SMS
+
+            //Si se ha mandado algún SMS...
+            if (hayListaContactos) {
+
+                //Habilitamos el botón transcurridos unos segundos
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        //Avisamos al usuario de que ha enviado el SMS con un sonido
+                        if (Constants.PLAY_SOUNDS) {
+
+                            PlaySound.play(R.raw.mensaje_enviado);
+
+                        }
+
+                        //Refrescamos la fecha de envío del SMS
+                        actualizarUltimoSMSEnviado(new Date());
+                        SMSAlertButton.setEnabled(true);
+                        SMSAlertButton.setBackgroundResource(R.drawable.boton_rojo_states);
+                        tresdosunoGo = (AnimationDrawable) SMSAlertButton.getBackground();
+
+                        tresdosunoGo.stop();
+                        tresdosunoGo.selectDrawable(0);
+
+                        boton_rojo_cancelar_envio = false;
+
+                    }
+                }, Constants.SMS_SENDING_DELAY);
+            }
+        }
+
+        else {
+
+            //Mostramos el texto de envío cancelado
+            AppLog.i(TAG, "Envío de SMS CANCELADO");
+            TextView tvUltimoSMSEnviado = (TextView) findViewById(R.id.tvUltimoSMSEnviado);
+            tvUltimoSMSEnviado.setText("Envío de SMS Cancelado");
+
+            SMSAlertButton.setEnabled(true);
+            SMSAlertButton.setBackgroundResource(R.drawable.boton_rojo_states);
+            tresdosunoGo = (AnimationDrawable) SMSAlertButton.getBackground();
+
+            tresdosunoGo.stop();
+            tresdosunoGo.selectDrawable(0);
+
+            boton_rojo_cancelar_envio = false;
+
+
+            //Avisamos al usuario de que NO se ha enviado el SMS con un sonido
+            if (Constants.PLAY_SOUNDS) {
+
+                PlaySound.play(R.raw.mensaje_cancelado);
+
+            }
+
+            //Volvemos a poner en el texto el último sms enviado
+            //Si se envió con anterioridad algún sms, se actualiza el texto informativo
+            boolean hasLastSMS = new AppSharedPreferences().hasPreferenceData(Constants.NOMBRE_APP_SHARED_PREFERENCES_DATETIME_ULTIMO_SMS_ENVIADO);
+            if(hasLastSMS){
+
+                tvUltimoSMSEnviado.setText("Último SMS enviado el " +
+                                new AppSharedPreferences().getPreferenceData(Constants.NOMBRE_APP_SHARED_PREFERENCES_DATETIME_ULTIMO_SMS_ENVIADO)
+                );
+            }
 
         }
 
