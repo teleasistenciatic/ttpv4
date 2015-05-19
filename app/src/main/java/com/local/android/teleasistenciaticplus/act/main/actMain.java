@@ -1,5 +1,6 @@
 package com.local.android.teleasistenciaticplus.act.main;
 
+
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.net.Uri;
@@ -26,9 +27,12 @@ import com.local.android.teleasistenciaticplus.lib.helper.AppLog;
 import com.local.android.teleasistenciaticplus.lib.helper.AppSharedPreferences;
 import com.local.android.teleasistenciaticplus.lib.sound.PlaySound;
 import com.local.android.teleasistenciaticplus.lib.sms.SmsLauncher;
+import com.local.android.teleasistenciaticplus.lib.sound.SintetizadorVoz;
 import com.local.android.teleasistenciaticplus.modelo.Constants;
 import com.local.android.teleasistenciaticplus.modelo.DebugLevel;
 import com.local.android.teleasistenciaticplus.modelo.TipoAviso;
+import com.local.android.teleasistenciaticplus.act.bateria.MonitorBateria;
+
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,6 +53,9 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
 
     static actMain instanciaActMain;
 
+    private MonitorBateria monBat;
+    private SintetizadorVoz sintetizador = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +74,10 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
             PlaySound.play(R.raw.bienvenido);
 
         }
+
+        // Creo el objeto de la clase SintetizadorVoz si los sonidos de la app están activados.
+        if(Constants.PLAY_SOUNDS)
+            sintetizador = new SintetizadorVoz(this);
 
         /////////////////////////////////////////////////////////////
         // Si no tiene al menos un contacto de usuario, cargamos la ventana de contacto de usuario
@@ -133,6 +144,12 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
 
         }
 
+        /////////////////////////////////////////////////////////////////////
+        // Inicio del Monitor de Batería, broadcastreceiver que corre en la
+        // aplicación, no en un servicio. Se iniciará según su configuración.
+        /////////////////////////////////////////////////////////////////////
+        monBat = new MonitorBateria();
+        AppLog.i("Monitor Bateria", "Creado objeto monBat, " + monBat.textoNivel() + " " + monBat.textoEstado());
     }
 
     @Override
@@ -183,6 +200,31 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy()
+    {
+        // Quito el registro del BroadcastReceiver del contexto. (Desactivo)
+        if(monBat.receiverActivo())
+            monBat.desactivaReceiver();
+        if(sintetizador!=null)
+            sintetizador.finaliza();
+        super.onDestroy();
+    }
+
+    /**
+     * Getter de la clase MonitorBateria
+     * @return Un objeto MonitorBateria.
+     */
+    public MonitorBateria getMonitorBateria()
+    {
+        return monBat;
+    }
+
+    /**
+     * Getter del sintetizador de voz.
+     * @return Objeto de la clase SintetizadorVoz, o null si no están activados los sonidos en la app.
+     */
+    public SintetizadorVoz getSintetizador() { return sintetizador; }
 
     /////////////////////////////////////////////////////////////
     // Métodos asociados a los botones de la UI
