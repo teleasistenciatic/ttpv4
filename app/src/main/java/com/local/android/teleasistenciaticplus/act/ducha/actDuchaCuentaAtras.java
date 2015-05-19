@@ -3,10 +3,13 @@ package com.local.android.teleasistenciaticplus.act.ducha;
 import android.app.DialogFragment;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.PowerManager;
 import android.support.v4.app.FragmentActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +28,9 @@ import com.local.android.teleasistenciaticplus.modelo.TipoAviso;
 import java.util.Date;
 
 public class actDuchaCuentaAtras extends FragmentActivity implements AppDialog.AppDialogNeutralListener {
+
+    private PowerManager.WakeLock wakeLock;
+    private PowerManager mgr;
 
     //TAG para depuración
     private final String TAG = getClass().getSimpleName();
@@ -65,15 +71,33 @@ public class actDuchaCuentaAtras extends FragmentActivity implements AppDialog.A
     /** Al salir de la aplicación se detiene la cuenta atrás */
     @Override
     public void onStop() {
+        super.onStop();
+        //TheCountDown.cancel();
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        wakeLock.release();
+    }
+
+    @Override
+    public void onBackPressed() {
         TheCountDown.cancel();
         finish();
-        super.onStop();
     }
 
 
 
+
     void startCountDown() {
+
+        /////////////////////////////////////////////////////////// WAKELOCK
+        mgr = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
+        wakeLock = mgr.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "MyWakeLock");
+        wakeLock.acquire();
+        /////////////////////////////////////////////////////////////////////
 
         //Capturamos el tiempo (en minutos) introducido por el usuario
         final TextView mTextField = (TextView) findViewById(R.id.mTextField);
@@ -87,7 +111,7 @@ public class actDuchaCuentaAtras extends FragmentActivity implements AppDialog.A
 
         final NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        futureTime = 65000; //TODO BORRAR
+        //futureTime = 65000;
         TheCountDown = new CountDownTimer(futureTime, interval) {
 
             Boolean alarmaDisparada = false;
