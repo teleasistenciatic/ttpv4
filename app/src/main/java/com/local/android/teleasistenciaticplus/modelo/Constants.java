@@ -72,6 +72,7 @@ public interface Constants {
     public static final String GPS_LONGITUD = "gpslongitud";
     public static final String GPS_PRECISION = "gpsprecision";
     public static final String GPS_ULTIMA_ACTUALIZACION = "gpsultimaactualizacion";
+    public static final String GPS_ULTIMA_ACTUALIZACION_FORMATO_NUMERICO = "gpsultimaactualizacionformatonumerico";
 
     ////////////////////////////////////////////////
     // ZONA SEGURA
@@ -95,5 +96,10 @@ public interface Constants {
     ////////////////////////////////////////////////
     public static final int MAX_NAME_SIZE = 20;
     public static final int MAX_APELLIDOS_SIZE = 20;
+
+    ////////////////////////////////////////////////
+    // TIEMPO MAXIMO PARA CONSIDERAR POSICION DE GPS CORRECTA
+    ////////////////////////////////////////////////
+    public static final int MAX_GPS_TIME = 300;
 
 }

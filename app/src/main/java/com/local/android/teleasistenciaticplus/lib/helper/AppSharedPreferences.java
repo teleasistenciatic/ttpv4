@@ -246,6 +246,7 @@ public class AppSharedPreferences implements Constants {
         setPreferenceData(Constants.ZONA_SEGURA_RADIO, String.valueOf(radio));
     }
 
+    /*
     // Guarda posicion GPS
     public void setGpsPos(String latitud, String longitud, String precision, String ultimaActualizacion) {
 
@@ -254,17 +255,18 @@ public class AppSharedPreferences implements Constants {
         setPreferenceData(Constants.GPS_PRECISION, precision);
         setPreferenceData(Constants.GPS_ULTIMA_ACTUALIZACION, ultimaActualizacion);
 
-    }
+    }*/
 
     // Lee posicion GPS
     public String[] getGpsPos() {
 
-        String[] gpsPosicion = new String[4];
+        String[] gpsPosicion = new String[5];
 
         gpsPosicion[0] = getPreferenceData(Constants.GPS_LATITUD);
         gpsPosicion[1] =  getPreferenceData(Constants.GPS_LONGITUD);
         gpsPosicion[2] = getPreferenceData(Constants.GPS_PRECISION);
         gpsPosicion[3] = getPreferenceData(Constants.GPS_ULTIMA_ACTUALIZACION);
+        gpsPosicion[4] = getPreferenceData(Constants.GPS_ULTIMA_ACTUALIZACION_FORMATO_NUMERICO);
 
         return gpsPosicion;
     }

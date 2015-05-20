@@ -470,6 +470,7 @@ public class serviceZonaSegura extends Service implements
         setSharedPreferenceData(Constants.GPS_LONGITUD, longitud);
         setSharedPreferenceData(Constants.GPS_PRECISION, precision);
         setSharedPreferenceData(Constants.GPS_ULTIMA_ACTUALIZACION, ultimaActualizacion);
+        setSharedPreferenceData(Constants.GPS_ULTIMA_ACTUALIZACION_FORMATO_NUMERICO, String.valueOf(System.currentTimeMillis()) );
     }
 
     /*

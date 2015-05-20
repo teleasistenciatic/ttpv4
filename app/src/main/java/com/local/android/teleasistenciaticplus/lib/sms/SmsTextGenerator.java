@@ -1,6 +1,7 @@
 package com.local.android.teleasistenciaticplus.lib.sms;
 
 import com.local.android.teleasistenciaticplus.R;
+import com.local.android.teleasistenciaticplus.lib.helper.AppLog;
 import com.local.android.teleasistenciaticplus.lib.helper.AppSharedPreferences;
 import com.local.android.teleasistenciaticplus.lib.helper.AppTime;
 import com.local.android.teleasistenciaticplus.lib.sanitize.DataSanitize;
@@ -16,6 +17,7 @@ public class SmsTextGenerator {
     String nombre;
     String apellidos;
     String nombreApp = "TELEASISTENCI@TIC+";
+    final String TAG = "SmsTextGenerator";
 
     public SmsTextGenerator() {
 
@@ -28,8 +30,8 @@ public class SmsTextGenerator {
         nombre = miDataSanitize.cambiaCaracteresEspanolesPorIngleses(nombreApellidos[0]);
         apellidos = miDataSanitize.cambiaCaracteresEspanolesPorIngleses(nombreApellidos[1]);
 
-        nombre = miDataSanitize.trimStringSize( nombre, Constants.MAX_NAME_SIZE);
-        apellidos = miDataSanitize.trimStringSize( apellidos, Constants.MAX_APELLIDOS_SIZE);
+        nombre = miDataSanitize.trimStringSize(nombre, Constants.MAX_NAME_SIZE);
+        apellidos = miDataSanitize.trimStringSize(apellidos, Constants.MAX_APELLIDOS_SIZE);
 
     }
 
@@ -107,18 +109,46 @@ public class SmsTextGenerator {
      */
     private String addGpsText(String mensaje) {
 
+        AppSharedPreferences miAppSharedPreferences = new AppSharedPreferences();
+
         String informacionGps = null;
         String[] valorGpsEnAppSharedPreferences;
 
-        AppSharedPreferences miAppSharedPreferences = new AppSharedPreferences();
+
         if ( miAppSharedPreferences.hasGpsPos() ) {
 
             valorGpsEnAppSharedPreferences = miAppSharedPreferences.getGpsPos();
 
-            informacionGps = " en posicion ( " + "https://maps.google.com/?q="
-                                                     + valorGpsEnAppSharedPreferences[0] + ","
-                                                     + valorGpsEnAppSharedPreferences[1] + " )";
+            //////////////////////////////////////////////////////////////
+            //Sólo añadimos la posicion GPS si los datos son recientes
+            //////////////////////////////////////////////////////////////
 
+            long tiempoActual = System.currentTimeMillis();
+            long tiempoUltimaActualizacionGps = 0;
+
+            //Leemos de las sharedpreferences, pero puede ser cero
+            String tiempoUltimaActualizacionGpsEnCadena = valorGpsEnAppSharedPreferences[4];
+
+            //Si la cadena es vacía
+            if ( tiempoUltimaActualizacionGpsEnCadena.length() != 0 ) {
+
+                try {
+                    tiempoUltimaActualizacionGps = Long.valueOf(valorGpsEnAppSharedPreferences[4]);
+                } catch (Exception e) {
+                    AppLog.e(TAG,"Error al convertir long",e);
+                }
+            }
+
+            Long diferenciaTemporalGpsEnSegundos = (tiempoActual - tiempoUltimaActualizacionGps) / 1000; //de milidegundos a segundos;
+
+            if ( diferenciaTemporalGpsEnSegundos < Constants.MAX_GPS_TIME ) {
+
+                informacionGps = " en posicion ( " + "https://maps.google.com/?q="
+                        + valorGpsEnAppSharedPreferences[0] + ","
+                        + valorGpsEnAppSharedPreferences[1] + " )";
+
+            }
+            ///////////////////////////////////////////////////////////////
 
         }
 

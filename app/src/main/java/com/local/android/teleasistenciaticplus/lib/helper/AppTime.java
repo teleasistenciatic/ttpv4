@@ -26,4 +26,5 @@ public class AppTime {
         SimpleDateFormat fechaHora = new SimpleDateFormat(dateFormat);
         return fechaHora.format(new Date());
     }
+
 }
