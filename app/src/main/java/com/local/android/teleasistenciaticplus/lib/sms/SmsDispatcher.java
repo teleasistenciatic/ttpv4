@@ -20,11 +20,26 @@ public class SmsDispatcher implements Constants {
     /**
      * Constructor
      * @param phone telefono
-     * @param message mensaje
+     * @param msgText mensaje
      */
-    public SmsDispatcher(String phone, String message) {
+    public SmsDispatcher(String phone, String msgText) {
         this.phoneNumber = phone;
-        this.message = message;
+        this.message = msgText;
+
+        /////////////// LIMITE DE LOS 160 CARACTERES ////////////////////////////////
+        // si tiene más de 160 caracteres no se manda el SMS sin mensaje de error  //
+        /////////////////////////////////////////////////////////////////////////////
+
+        // 1. Para recortar primero eliminamos los caractes de TeleAsistenciaTIC+
+        if ( message.length() > Constants.LIMITE_CARACTERS_SMS ) {
+            message = message.replace("TELEASISTENCI@TIC+:","");
+
+            // 2. Si siguen siendo demasiados caracteres, nos quedamos con los 160 últimos
+            if ( message.length() > Constants.LIMITE_CARACTERS_SMS ) {
+                message = message.substring( message.length() - Constants.LIMITE_CARACTERS_SMS );
+            }
+
+        }
     }
 
     /**

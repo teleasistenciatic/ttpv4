@@ -269,6 +269,22 @@ public class AppSharedPreferences implements Constants {
         return gpsPosicion;
     }
 
+    public boolean hasGpsPos() {
+
+        SharedPreferences prefs = GlobalData.getAppContext().getSharedPreferences(APP_SHARED_PREFERENCES_FILE, Context.MODE_MULTI_PROCESS);
+
+        String latitud = prefs.getString(Constants.GPS_LATITUD, "");
+        String longitud = prefs.getString(Constants.GPS_LONGITUD, "");
+
+
+        if ( (latitud.length() > 0) && (longitud.length() > 0) ) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////// METODOS GENERICOS CUALQUIER SHARED PREFERENCES //////////////////

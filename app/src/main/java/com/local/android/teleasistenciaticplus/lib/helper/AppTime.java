@@ -9,7 +9,7 @@ import java.util.Date;
  */
 public class AppTime {
 
-    String dateFormat = "dd/MM/yyyy - HH:mm:ss";
+    String dateFormat = "dd/MM/yyyy : HH:mm:ss";
 
     public AppTime(String dateFormat) {
         this.dateFormat = dateFormat;
@@ -21,7 +21,6 @@ public class AppTime {
     public void setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
     }
-
 
     public String getTimeDate() {
         SimpleDateFormat fechaHora = new SimpleDateFormat(dateFormat);

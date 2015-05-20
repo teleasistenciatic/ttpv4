@@ -13,6 +13,7 @@ public interface Constants {
 
     public static final DebugLevel DEBUG_LEVEL = DebugLevel.DEBUG;
     public static final boolean FAKE_SMS = false;
+    public static final int LIMITE_CARACTERS_SMS = 159;
 
     public static final Boolean LOG_TO_FILE = true;
     public static final String DEBUG_LOG_FILE = "teleasistencia.log";
@@ -88,5 +89,11 @@ public interface Constants {
 
     public static final long GPS_READ_INTERVAL = 1000 * 10; //60*1000 para produccion
     public static final long GPS_READ_FASTEST_INTERVAL = 1000 * 5; //5*1000 para produccion
+
+    ////////////////////////////////////////////////
+    // LIMITE DE CARACTERES DE CADENAS
+    ////////////////////////////////////////////////
+    public static final int MAX_NAME_SIZE = 20;
+    public static final int MAX_APELLIDOS_SIZE = 20;
 
 }

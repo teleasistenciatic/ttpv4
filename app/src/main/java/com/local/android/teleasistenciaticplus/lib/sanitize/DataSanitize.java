@@ -25,4 +25,13 @@ public class DataSanitize {
         return output;
     }
 
+    /** Devuelve los primeros caracteres de una cadena dado un valor **/
+    public String trimStringSize(String cadena, int max) {
+        if ( cadena.length() > max) {
+            return cadena.substring(0,max);
+        } else {
+            return cadena;
+        }
+    }
+
 }
