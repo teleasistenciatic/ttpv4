@@ -120,6 +120,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:onClick="user_options_persona_contacto_salir_button"
-        android:text="Salir" />
+        android:text="Guardar y salir" />
 
 </LinearLayout>
