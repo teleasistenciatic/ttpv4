@@ -31,7 +31,8 @@ public class actUserOptions extends Activity {
                 "Datos personales", // 0,
                 "Personas de contacto", // 1
                 "Detección de caidas", //2
-                "Zona segura" //3
+                "Zona segura", //3
+                "Monitor de Batería" //4
         };
 
         /// Creación del adaptador con su String
@@ -64,6 +65,9 @@ public class actUserOptions extends Activity {
                         break;
                     case 3: //"Zona segura"
                         actToLoad = actUserOptionsZonaSegura.class;
+                        break;
+                    case 4: //"Monitor de batería"
+                        actToLoad = actUserOptionsMonitorBateria.class;
                         break;
                 }
 

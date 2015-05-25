@@ -222,8 +222,8 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
     protected void onDestroy()
     {
         // Quito el registro del BroadcastReceiver del contexto. (Desactivo)
-        if(monBat.receiverActivo())
-            monBat.desactivaReceiver();
+        if(monBat.getReceiverActivo())
+            monBat.desactivaReceiver(false);
         if(sintetizador!=null)
             sintetizador.finaliza();
         super.onDestroy();

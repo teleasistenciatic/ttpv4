@@ -26,15 +26,20 @@ import com.local.android.teleasistenciaticplus.modelo.GlobalData;
 public class MonitorBateria
 {
     // Atributos de la clase.
-    private static Boolean activarAlInicio = false, receiverActivado = false, notificado = false;
-    private static int nivelAlerta=0, nivel = 0, estado = 0;
+    private static boolean activarAlInicio = false, receiverActivado = false, notificado = false;
+    private static boolean powerSafe = true;
+    private static int nivelAlerta, nivel, estado = 0;
     private static BroadcastReceiver mBatInfoReceiver = null;
+    private static int intervalo, contador;
 
     // Constructor sin parámetros.
     public MonitorBateria()
     {
         // Llamo al método que lee de las SharedPreferences y asigna los valores iniciales.
         cargaPreferencias();
+
+        // Inicio el contador a 0.
+        contador = 0;
 
         // El receiver de eventos de bateria, declarado inline por exigencias androidianas
         mBatInfoReceiver = new BroadcastReceiver() // Terminado
@@ -44,33 +49,54 @@ public class MonitorBateria
             @Override
             public void onReceive( final Context context, final Intent intent )
             {
-                // Extraigo los datos de nivel de carga y estado de batería del intent recibido.
-                nivel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-                estado = intent.getIntExtra(BatteryManager.EXTRA_STATUS,0);
-                // Actualizo datos del Layout y compruebo que el nivel de la batería esté por encima
-                // del nivel de alerta y que la batería no esté en carga.
-                // mostrarDatos(nivel, estado);
-                if((nivel<=nivelAlerta && estado != BatteryManager.BATTERY_STATUS_CHARGING))
-                    // Lanzo una notificación
-                    notificacion();
-                // Si estoy cargando la batería reestablezco el flag de notificado a false.
-                if(estado == BatteryManager.BATTERY_STATUS_CHARGING)
-                    notificado = false;
+                // Con esta condición el intervalo mínimo de comprobaciones es uno cada dos eventos si intervalo es 0.
+                // El contador se tiene en cuenta solo si powerSafe es true, si no pasa al else.
+                if(powerSafe && contador < intervalo * 2 && hayDatos()) {
+                    contador++;
+                }
+                else {
+                    // Extraigo los datos de nivel de carga y estado de batería del intent recibido.
+                    nivel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+                    estado = intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
+                    Log.i("onReceive", "Recogido nivel = " + nivel + " y estado = " + estado);
+
+                    // Guardo el dato de nivel de carga que acabo de leer.
+                    guardaUltimoNivel();
+
+                    // Actualizo datos del Layout y compruebo que el nivel de la batería esté por encima
+                    // del nivel de alerta y que la batería no esté en carga.
+                    // mostrarDatos(nivel, estado);
+                    if ((nivel <= nivelAlerta && estado != BatteryManager.BATTERY_STATUS_CHARGING))
+                        // Lanzo una notificación
+                        notificacion();
+                    // Si estoy cargando la batería reestablezco el flag de notificado a false.
+                    if (estado == BatteryManager.BATTERY_STATUS_CHARGING)
+                        notificado = false;
+
+                    // Reinicio el contador
+                    contador = 0;
+                }
             }
         };
-
-        if(activarAlInicio) // Activo el receiver si está configurado arrancarlo al inicio.
-            activaReceiver();
+        // Hago una primera lectura de datos de batería. Para ello activo y luego desactivo el receiver
+        activaReceiver(false, false);
+        desactivaReceiver(false);
+        // Si estaba configurado para activarse al inicio lo vuelvo a lanzar con las preferencias.
+        if(activarAlInicio)
+            activaReceiver(true, false);
     }
+
 
     private static void cargaPreferencias() // Termminado
     {
         // Saco el nivel de alerta y la opción de si se debe iniciar el receiver con la actividad.
         AppSharedPreferences miSharedPref = new AppSharedPreferences();
-        if(miSharedPref.hasPreferenceData("NivelAlerta") && miSharedPref.hasPreferenceData("ActivarAlInicio"))
+        if(miSharedPref.hasPreferenceData("NivelAlerta") && miSharedPref.hasPreferenceData("ActivarAlInicio")
+                && miSharedPref.hasPreferenceData("Intervalo"))
         {
             // Hay valores guardados, los leo
             nivelAlerta = Integer.parseInt(miSharedPref.getPreferenceData("NivelAlerta"));
+            intervalo = Integer.parseInt(miSharedPref.getPreferenceData("Intervalo"));
             activarAlInicio = Boolean.parseBoolean(miSharedPref.getPreferenceData("ActivarAlInicio"));
         }
         else
@@ -78,8 +104,11 @@ public class MonitorBateria
             // No hay valores guardados, pongo valores por defecto.
             activarAlInicio = false;
             nivelAlerta = 30;
+            intervalo = 6;
         }
-        AppLog.i("OjeadorBateria", "Preferencias cargadas: nivelAlerta = " + nivelAlerta + ", activarAlInicio = " + activarAlInicio);
+        AppLog.i("Batería", "Preferencias cargadas: nivelAlerta = " + nivelAlerta +
+                ", activarAlInicio = " + activarAlInicio +
+                ", Intervalo = " + intervalo);
     }
 
     private static void guardaPreferencias() // Terminado
@@ -87,16 +116,118 @@ public class MonitorBateria
         // Creo un editor para guardar las preferencias.
         AppSharedPreferences miSharedPref = new AppSharedPreferences();
         miSharedPref.setPreferenceData("NivelAlerta", Integer.toString(nivelAlerta));
+        miSharedPref.setPreferenceData("Intervalo", Integer.toString(intervalo));
         miSharedPref.setPreferenceData("ActivarAlInicio", Boolean.toString(activarAlInicio));
         Toast.makeText(GlobalData.getAppContext(), "Configuración Guardada", Toast.LENGTH_SHORT).show();
         Log.i("guardaPreferencias","Preferencias guardadas con valores: nivelAlerta = " +
-                nivelAlerta + ", activarAlInicio = " + activarAlInicio);
+                nivelAlerta + ", activarAlInicio = " + activarAlInicio +
+                "Intervalo de refresco = " + intervalo);
     }
 
-    public String textoEstado() // Terminado
+    private static void guardaUltimoNivel()
+    {
+        AppSharedPreferences miSharedPref = new AppSharedPreferences();
+        miSharedPref.setPreferenceData("UltimoNivelBateria", Integer.toString(nivel));
+        Log.i("guardaUltimoNivel", "Guardado el último nivel de batería leído: " + nivel);
+    }
+
+
+    public void activaReceiver(boolean ahorrar, boolean tostar) // Terminado
+    {
+        if(getReceiverActivo())
+            // El receiver está activo, devuelvo un aviso.
+            Toast.makeText(GlobalData.getAppContext(),"El Monitor de Batería ya está Activo",Toast.LENGTH_SHORT).show();
+        else
+        {
+            // Primero establezco el intervalo de refresco a 0 para que lea inmediatamente la
+            // Registro el receiver para activarlo.
+            IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+            GlobalData.getAppContext().registerReceiver(mBatInfoReceiver, intentFilter);
+
+            setReceiverActivo(true);
+            Log.i("activaReceiver","Registrado receiver de batería...");
+
+            if(tostar)
+                Toast.makeText(GlobalData.getAppContext(),"Monitor Batería Activado",Toast.LENGTH_SHORT).show();
+
+            // Establezco el intervalo de refresco
+            powerSafe = ahorrar;
+        }
+    }
+
+    public void desactivaReceiver(boolean tostar) // Terminado
+    {
+        if(getReceiverActivo())
+        {
+            // La variable de control me dice que el receiver está registrado, lo quito.
+            GlobalData.getAppContext().unregisterReceiver(mBatInfoReceiver);
+            setReceiverActivo(false);
+            powerSafe = true; // Activo el modo ahorro de energía (valor por defecto)
+            if(tostar)
+                Toast.makeText(GlobalData.getAppContext(), "Monitor Batería Desactivado", Toast.LENGTH_SHORT).show();
+        }
+        else
+            // El receiver está desactivado, lo aviso.
+            if(tostar)
+                Toast.makeText(GlobalData.getAppContext(),"El Monitor de Batería ya está inactivo",Toast.LENGTH_SHORT).show();
+    }
+
+    public static int getNivel() { return nivel; }
+    public static int getEstado() { return estado; }
+    public Boolean getReceiverActivo() { return receiverActivado; } // Terminado
+    public void setReceiverActivo(boolean op) { receiverActivado = op; }
+    public int getNivelAlerta() { return nivelAlerta; } // Terminado
+    public void setNivelAlerta(int alertLevel) { nivelAlerta = alertLevel; } // Terminado
+    public Boolean getActivarAlInicio() { return activarAlInicio; } // Terminado
+    public void setActivarAlInicio(Boolean alInicio) { activarAlInicio = alInicio; } // Terminado
+    public int getIntervalo() { return intervalo; } // Terminado
+    public void setIntervalo(int interval) { intervalo = interval; } // Terminado
+    public void commit(){ guardaPreferencias(); } // Terminado
+    public boolean hayDatos() {
+        // Devuelvo true si estado != 0, que significa que ha leido algo
+        return estado != 0;
+    }
+    public void notificacion() // Terminado
+    {
+        // Pillo el servicio de notificaciones del sistema.
+        NotificationManager notificador = (NotificationManager)GlobalData.getAppContext()
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if(!notificado)
+        {
+            int idNotificacion=0;
+            // Construcción de la notificación
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(GlobalData.getAppContext())
+                    .setSmallIcon(R.drawable.logo_transparente_1x1)
+                    .setContentText("Nivel de carga: " + String.valueOf(nivel) + "%")
+                            // .setContentInfo(creaCadenaEstado(estado))
+                    .setContentTitle("POCA BATERIA")
+                    .setLargeIcon(BitmapFactory.decodeResource(GlobalData.getAppContext().getResources(),
+                            R.drawable.logo_transparente_1x1))
+                    .setAutoCancel(true)
+                            // Asigno Intent vacio para que al pulsar quite la notificacion pero no haga nada.
+                    .setContentIntent(PendingIntent.getActivity(
+                            GlobalData.getAppContext().getApplicationContext(), 0, new Intent(), 0));
+            //.setContentIntent(resultPendingIntent); // Utilizado para lanzar algo al pulsar en la notificación.
+
+            // Lanzo la notificación.
+            Notification notif = mBuilder.build();
+            notif.defaults |= Notification.DEFAULT_VIBRATE;
+            //notif.defaults |= Notification.DEFAULT_SOUND;
+            notificador.notify(idNotificacion, notif);
+            Log.i("Notificador", "Notificacion lanzada con id = " + idNotificacion);
+            notificado = true;
+
+            // Lanzo también el nivel de batería por voz.
+            SintetizadorVoz loro = actMain.getInstance().getSintetizador();
+            loro.hablaPorEsaBoquita("¡Atención!. " + textoNivel() + ". Por favor, ponga el móvil a cargar.");
+        }
+    }
+
+    public static String textoEstado() // Terminado
     {
         String strEstado;
-        switch(estado)
+        switch(getEstado())
         {
             case BatteryManager.BATTERY_STATUS_CHARGING:
                 strEstado = "Bateria en carga...";
@@ -120,87 +251,11 @@ public class MonitorBateria
         return strEstado;
     }
 
-    public String textoNivel() // Terminado
+    public static String textoNivel() // Terminado
     {
-        return "Nivel de carga: " + String.valueOf(nivel) + "%";
+        return "Nivel de carga: " + String.valueOf(getNivel()) + "%";
     }
 
-    public void activaReceiver() // Terminado
-    {
-        if(receiverActivo())
-            // El receiver está activo, devuelvo un aviso.
-            Toast.makeText(GlobalData.getAppContext(),"El Monitor de Batería ya está Activo",Toast.LENGTH_SHORT).show();
-        else
-        {
-            // Registro el receiver para activarlo.
-            GlobalData.getAppContext().registerReceiver(mBatInfoReceiver,
-                    new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-            receiverActivado = true;
-            Toast.makeText(GlobalData.getAppContext(),"Monitor Batería Activado",Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void desactivaReceiver() // Terminado
-    {
-        if(receiverActivo())
-        {
-            // La variable de control me dice que el receiver está registrado, lo quito.
-            GlobalData.getAppContext().unregisterReceiver(mBatInfoReceiver);
-            receiverActivado = false;
-            /*************** Estos controles deben estar en la actividad de configuracion *********
-            tvNivel.setText("Sin recepción de datos");
-            tvEstado.setText("Monitor de batería");
-            tvReceiver.setText("Desactivado");
-            **************************************************************************************/
-            Toast.makeText(GlobalData.getAppContext(), "Monitor Batería Desactivado", Toast.LENGTH_SHORT).show();
-        }
-        else
-            // El receiver está desactivado, lo aviso.
-            Toast.makeText(GlobalData.getAppContext(),"El Monitor de Batería ya está inactivo",Toast.LENGTH_SHORT).show();
-    }
-
-    public Boolean receiverActivo() { return receiverActivado; } // Terminado
-    public int getNivelAlerta() { return nivelAlerta; } // Terminado
-    public void setNivelAlerta(int alertLevel) { nivelAlerta = alertLevel; } // Terminado
-    public Boolean getActivarAlInicio() { return activarAlInicio; } // Terminado
-    public void setActivarAlInicio(Boolean alInicio) { activarAlInicio = alInicio; }
-    public void commit(){ guardaPreferencias(); }
-
-    public void notificacion() // Terminado
-    {
-        // Pillo el servicio de notificaciones del sistema.
-        NotificationManager notificador = (NotificationManager)GlobalData.getAppContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if(!notificado)
-        {
-            int idNotificacion=0;
-            // Construcción de la notificación
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(GlobalData.getAppContext())
-                    .setSmallIcon(R.drawable.logo_transparente_1x1)
-                    .setContentText(textoNivel())
-                            // .setContentInfo(creaCadenaEstado(estado))
-                    .setContentTitle("POCA BATERIA")
-                    .setLargeIcon(BitmapFactory.decodeResource(GlobalData.getAppContext().getResources(),
-                            R.drawable.logo_transparente_1x1))
-                    .setAutoCancel(true)
-                            // Asigno Intent vacio para que al pulsar quite la notificacion pero no haga nada.
-                    .setContentIntent(PendingIntent.getActivity(
-                            GlobalData.getAppContext().getApplicationContext(), 0, new Intent(), 0));
-            //.setContentIntent(resultPendingIntent);
-
-            // Lanzo la notificación.
-            Notification notif = mBuilder.build();
-            notif.defaults |= Notification.DEFAULT_VIBRATE;
-            //notif.defaults |= Notification.DEFAULT_SOUND;
-            notificador.notify(idNotificacion, notif);
-            Log.i("Notificador", "Notificacion lanzada con id = " + idNotificacion);
-            notificado = true;
-
-            // Lanzo también el nivel de batería por voz.
-            SintetizadorVoz loro = actMain.getInstance().getSintetizador();
-            loro.hablaPorEsaBoquita(textoNivel()+". Por favor, ponga el móvil a cargar.");
-        }
-    }
 }
 
 ///////////////////////////////////////////////////////////////////////
