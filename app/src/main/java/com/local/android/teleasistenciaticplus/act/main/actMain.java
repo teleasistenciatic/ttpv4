@@ -166,7 +166,13 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
         // Inicio del Monitor de Batería, broadcastreceiver que corre en la
         // aplicación, no en un servicio. Se iniciará según su configuración.
         /////////////////////////////////////////////////////////////////////
-        monBat = new MonitorBateria();
+        try {
+            monBat = new MonitorBateria();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            AppLog.i("Error en main", "Efectivamente se da aquí -> e = "+ e.getMessage() + ", " + e.getLocalizedMessage());
+        }
         AppLog.i("Monitor Bateria", "Creado objeto monBat, " + monBat.textoNivel() + " " + monBat.textoEstado());
     }
 
@@ -176,6 +182,13 @@ public class actMain extends FragmentActivity implements AppDialog.AppDialogNeut
         super.onStart();
 
     }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
+
+
 
     public static actMain getInstance(){
         return instanciaActMain;

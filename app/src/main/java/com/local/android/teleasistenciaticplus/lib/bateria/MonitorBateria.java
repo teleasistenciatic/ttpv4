@@ -27,8 +27,8 @@ public class MonitorBateria
 {
     // Atributos de la clase.
     private static boolean activarAlInicio = false, receiverActivado = false, notificado = false;
-    private static boolean powerSafe = true;
-    private static int nivelAlerta, nivel, estado = 0;
+    private static boolean powerSafe = true, inicializado = false, desactivarAlRecibir = false;
+    private static int nivelAlerta, nivel = 0, estado = 0;
     private static BroadcastReceiver mBatInfoReceiver = null;
     private static int intervalo, contador;
 
@@ -76,16 +76,26 @@ public class MonitorBateria
                     // Reinicio el contador
                     contador = 0;
                 }
+
+                // En este punto ya he recibido un dato, ya que si no había por ser la primera vez
+                // que se ha recibido alguno, la condición del if previo obliga a leer del intent.
+                // Si tengo activada la opción de desactivar el receiver al recibir lo hago.
+                if(getDesactivarAlRecibir()) {
+                    desactivaReceiver(false);
+                    setDesactivarAlRecibir(false);
+                }
             }
         };
-        // Hago una primera lectura de datos de batería. Para ello activo y luego desactivo el receiver
+
+        // Hago una primera lectura de datos de batería. Para ello activo el receiver y seguidamente
+        // pido desactivarlo, cosa que no hará hasta que reciba datos.
         activaReceiver(false, false);
         desactivaReceiver(false);
+
         // Si estaba configurado para activarse al inicio lo vuelvo a lanzar con las preferencias.
         if(activarAlInicio)
             activaReceiver(true, false);
     }
-
 
     private static void cargaPreferencias() // Termminado
     {
@@ -160,11 +170,16 @@ public class MonitorBateria
         if(getReceiverActivo())
         {
             // La variable de control me dice que el receiver está registrado, lo quito.
-            GlobalData.getAppContext().unregisterReceiver(mBatInfoReceiver);
-            setReceiverActivo(false);
-            powerSafe = true; // Activo el modo ahorro de energía (valor por defecto)
-            if(tostar)
-                Toast.makeText(GlobalData.getAppContext(), "Monitor Batería Desactivado", Toast.LENGTH_SHORT).show();
+            if(!hayDatos())
+                setDesactivarAlRecibir(true);
+            else
+            {
+                GlobalData.getAppContext().unregisterReceiver(mBatInfoReceiver);
+                setReceiverActivo(false);
+                powerSafe = true; // Activo el modo ahorro de energía (valor por defecto)
+                if(tostar)
+                    Toast.makeText(GlobalData.getAppContext(), "Monitor Batería Desactivado", Toast.LENGTH_SHORT).show();
+            }
         }
         else
             // El receiver está desactivado, lo aviso.
@@ -172,6 +187,14 @@ public class MonitorBateria
                 Toast.makeText(GlobalData.getAppContext(),"El Monitor de Batería ya está inactivo",Toast.LENGTH_SHORT).show();
     }
 
+    public static void setDesactivarAlRecibir(boolean opcion)
+    {
+        desactivarAlRecibir = opcion;
+    }
+    public static boolean getDesactivarAlRecibir()
+    {
+        return desactivarAlRecibir;
+    }
     public static int getNivel() { return nivel; }
     public static int getEstado() { return estado; }
     public Boolean getReceiverActivo() { return receiverActivado; } // Terminado
@@ -185,7 +208,7 @@ public class MonitorBateria
     public void commit(){ guardaPreferencias(); } // Terminado
     public boolean hayDatos() {
         // Devuelvo true si estado != 0, que significa que ha leido algo
-        return estado != 0;
+        return (nivel != 0 && estado != 0);
     }
     public void notificacion() // Terminado
     {
