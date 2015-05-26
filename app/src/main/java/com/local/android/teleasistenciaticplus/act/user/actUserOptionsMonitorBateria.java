@@ -37,6 +37,7 @@ public class actUserOptionsMonitorBateria extends Activity implements View.OnCli
         tvNivel = (TextView) findViewById(R.id.tvNivel);
         tvReceiver = (TextView) findViewById(R.id.tvReceiver);
 
+
         mostrarDatos();
 
         npNivelAlerta = (NumberPicker) findViewById(R.id.npNivelAlerta);
@@ -63,6 +64,8 @@ public class actUserOptionsMonitorBateria extends Activity implements View.OnCli
         btnAplicar.setOnClickListener(this);
 
         btnSalir = (Button) findViewById(R.id.btnSalir);
+        btnSalir.setFocusable(true);
+        btnSalir.requestFocus();
         btnSalir.setOnClickListener(this);
 
         // if(monitor.getReceiverActivo())
@@ -74,8 +77,9 @@ public class actUserOptionsMonitorBateria extends Activity implements View.OnCli
         switch (v.getId())
         {
             case R.id.btnLanzarReceiver:
+                monitor.activaReceiver(false, false);
+                monitor.desactivaReceiver(false);
                 monitor.activaReceiver(true, true);
-                mostrarDatos();
                 break;
             case R.id.btnPararReceiver:
                 monitor.desactivaReceiver(true);
@@ -96,9 +100,11 @@ public class actUserOptionsMonitorBateria extends Activity implements View.OnCli
 
     public static void mostrarDatos() // Terminado
     {
+        AppLog.i("mostrarDatos()","getReceiverActivo = " + monitor.getReceiverActivo());
         if (monitor.getReceiverActivo())
         {
             if(monitor.hayDatos()){
+                AppLog.i("mostrarDatos()","hayDatos = " + monitor.hayDatos());
                 tvReceiver.setText("Monitor Batería Activado");
                 tvNivel.setText(monitor.textoNivel());
                 tvEstado.setText(monitor.textoEstado());

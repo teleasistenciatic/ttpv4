@@ -27,7 +27,7 @@ public class MonitorBateria
 {
     // Atributos de la clase.
     private static boolean activarAlInicio = false, receiverActivado = false, notificado = false;
-    private static boolean powerSafe = true, inicializado = false, desactivarAlRecibir = false;
+    private static boolean powerSafe = false, desactivarAlRecibir = false;
     private static int nivelAlerta, nivel = 0, estado = 0;
     private static BroadcastReceiver mBatInfoReceiver = null;
     private static int intervalo, contador;
@@ -49,38 +49,44 @@ public class MonitorBateria
             @Override
             public void onReceive( final Context context, final Intent intent )
             {
-                // Con esta condición el intervalo mínimo de comprobaciones es uno cada dos eventos si intervalo es 0.
-                // El contador se tiene en cuenta solo si powerSafe es true, si no pasa al else.
-                if(powerSafe && contador < intervalo * 2 && hayDatos()) {
-                    contador++;
+                if(intent.getAction().equals(Intent.ACTION_POWER_CONNECTED) ||
+                        intent.getAction().equals(Intent.ACTION_POWER_DISCONNECTED))
+                {
+                    notificado = false;
                 }
-                else {
-                    // Extraigo los datos de nivel de carga y estado de batería del intent recibido.
-                    nivel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-                    estado = intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
-                    Log.i("onReceive", "Recogido nivel = " + nivel + " y estado = " + estado);
+                else
+                {
+                    // Con esta condición el intervalo mínimo de comprobaciones es uno cada dos eventos si intervalo es 0.
+                    // El contador se tiene en cuenta solo si powerSafe es true, si no pasa al else.
+                    if(powerSafe && contador < intervalo && hayDatos())
+                        contador++;
+                    else
+                    {
+                        // Extraigo los datos de nivel de carga y estado de batería del intent recibido.
+                        nivel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+                        estado = intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
+                        Log.i("onReceive", "Recogido nivel = " + nivel + " y estado = " + estado);
 
-                    // Guardo el dato de nivel de carga que acabo de leer.
-                    guardaUltimoNivel();
+                        // Guardo el dato de nivel de carga que acabo de leer.
+                        guardaUltimoNivel();
 
-                    // Actualizo datos del Layout y compruebo que el nivel de la batería esté por encima
-                    // del nivel de alerta y que la batería no esté en carga.
-                    // mostrarDatos(nivel, estado);
-                    if ((nivel <= nivelAlerta && estado != BatteryManager.BATTERY_STATUS_CHARGING))
-                        // Lanzo una notificación
-                        notificacion();
-                    // Si estoy cargando la batería reestablezco el flag de notificado a false.
-                    if (estado == BatteryManager.BATTERY_STATUS_CHARGING)
-                        notificado = false;
+                        // Actualizo datos del Layout y compruebo que el nivel de la batería esté por encima
+                        // del nivel de alerta y que la batería no esté en carga.
+                        // mostrarDatos(nivel, estado);
+                        if ((nivel <= nivelAlerta && estado != BatteryManager.BATTERY_STATUS_CHARGING))
+                            // Lanzo una notificación
+                            notificacion();
 
-                    // Reinicio el contador
-                    contador = 0;
+                        // Reinicio el contador
+                        contador = 0;
+                    }
                 }
 
                 // En este punto ya he recibido un dato, ya que si no había por ser la primera vez
                 // que se ha recibido alguno, la condición del if previo obliga a leer del intent.
                 // Si tengo activada la opción de desactivar el receiver al recibir lo hago.
-                if(getDesactivarAlRecibir()) {
+                if(getDesactivarAlRecibir())
+                {
                     desactivaReceiver(false);
                     setDesactivarAlRecibir(false);
                 }
@@ -88,11 +94,12 @@ public class MonitorBateria
         };
 
         // Hago una primera lectura de datos de batería. Para ello activo el receiver y seguidamente
-        // pido desactivarlo, cosa que no hará hasta que reciba datos.
+        // pido desactivarlo, cosa que no hará hasta que reciba datos
         activaReceiver(false, false);
         desactivaReceiver(false);
 
         // Si estaba configurado para activarse al inicio lo vuelvo a lanzar con las preferencias.
+        AppLog.i("constructor MonitorBateria", "Tengo la orden activarAlInicio = " + activarAlInicio);
         if(activarAlInicio)
             activaReceiver(true, false);
     }
@@ -150,8 +157,11 @@ public class MonitorBateria
         else
         {
             // Primero establezco el intervalo de refresco a 0 para que lea inmediatamente la
-            // Registro el receiver para activarlo.
+            // Registro el receiver para activarlo con el filtro de eventos de cambio de bateria,
+            // cargador conectado, y cargador desconectado.
             IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+            intentFilter.addAction(Intent.ACTION_POWER_CONNECTED);
+            intentFilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
             GlobalData.getAppContext().registerReceiver(mBatInfoReceiver, intentFilter);
 
             setReceiverActivo(true);
@@ -176,7 +186,7 @@ public class MonitorBateria
             {
                 GlobalData.getAppContext().unregisterReceiver(mBatInfoReceiver);
                 setReceiverActivo(false);
-                powerSafe = true; // Activo el modo ahorro de energía (valor por defecto)
+                powerSafe = false; // Desactivo el modo ahorro de energía (valor por defecto)
                 if(tostar)
                     Toast.makeText(GlobalData.getAppContext(), "Monitor Batería Desactivado", Toast.LENGTH_SHORT).show();
             }
